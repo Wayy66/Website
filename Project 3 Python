@@ -10,8 +10,8 @@
 }
 </style>
 
-<div id="overflowCode">
-<pre style="margin: 0; line-height: 125%"><span style="color: #888888"># Project Statement: </span>
+<pre style="margin: 0; line-height: 125%"><div id="overflowCode">
+<span style="color: #888888"># Project Statement: </span>
 <span style="color: #888888"># This project shows an interface to manage inventory &amp; check sales, expenses, and profit.</span>
 <span style="color: #888888"># The cost of flower varies. In sales, there is a flat $30 markup for vase. </span>
 <span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">tkinter</span> <span style="color: #008800; font-weight: bold">as</span> <span style="color: #0e84b5; font-weight: bold">tk</span> 
@@ -544,4 +544,4 @@ fnDisplayPastOrders()
  
 <span style="color: #888888"># Run the window </span>
 root<span style="color: #333333">.</span>mainloop()
-</pre></div>
+</div></pre>
