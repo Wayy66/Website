@@ -1,0 +1,547 @@
+<style>
+#overflowCode {
+  width: auto;
+  height: 50VH;
+  overflow: scroll;
+  background: #ffffff; 
+  border:solid gray;
+  border-width:.1em .1em .1em .8em; 
+  padding:.2em .6em;
+}
+</style>
+
+<div id="overflowCode">
+<pre style="margin: 0; line-height: 125%"><span style="color: #888888"># Project Statement: </span>
+<span style="color: #888888"># This project shows an interface to manage inventory &amp; check sales, expenses, and profit.</span>
+<span style="color: #888888"># The cost of flower varies. In sales, there is a flat $30 markup for vase. </span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">tkinter</span> <span style="color: #008800; font-weight: bold">as</span> <span style="color: #0e84b5; font-weight: bold">tk</span> 
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">sqlite3</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">pathlib</span>
+ 
+dbFile <span style="color: #333333">=</span> <span style="color: #008800; font-weight: bold">None</span>
+conn <span style="color: #333333">=</span> <span style="color: #008800; font-weight: bold">None</span>
+command <span style="color: #333333">=</span> <span style="color: #008800; font-weight: bold">None</span>
+
+ 
+<span style="color: #888888"># Function for setting up database connection  </span>
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnOpenDatabase</span>():
+    <span style="color: #008800; font-weight: bold">global</span> dbFile, conn, command
+    <span style="color: #008800; font-weight: bold">try</span>:
+        <span style="color: #888888"># Provide the file location</span>
+        dbFile <span style="color: #333333">=</span> pathlib<span style="color: #333333">.</span>Path(<span style="background-color: #fff0f0">&quot;Project3Database.sqlite3&quot;</span>)
+        <span style="color: #888888"># Test to make sure the file exists</span>
+        <span style="color: #008800; font-weight: bold">if</span> dbFile<span style="color: #333333">.</span>exists() <span style="color: #333333">==</span> <span style="color: #008800; font-weight: bold">False</span>:
+            messagebox<span style="color: #333333">.</span>showerror(<span style="background-color: #fff0f0">&quot;Database Error&quot;</span>, <span style="background-color: #fff0f0">&quot;The database was not found.&quot;</span>)
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;Database not found&quot;</span>)
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;*********************************************************************&quot;</span>)
+            quit() <span style="color: #888888"># close the program</span>
+        <span style="color: #008800; font-weight: bold">else</span>:
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;Database was found&quot;</span>)
+            conn <span style="color: #333333">=</span> sqlite3<span style="color: #333333">.</span>connect(dbFile)
+            command <span style="color: #333333">=</span> conn<span style="color: #333333">.</span>cursor()
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;Connection to database made&quot;</span>)
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;*********************************************************************&quot;</span>)
+    <span style="color: #008800; font-weight: bold">except</span> <span style="color: #FF0000; font-weight: bold">Exception</span> <span style="color: #008800; font-weight: bold">as</span> ex:
+        messagebox<span style="color: #333333">.</span>showerror(<span style="background-color: #fff0f0">&quot;Database Error&quot;</span>, <span style="background-color: #fff0f0">&quot;An error occurred while trying to open the database&quot;</span>)
+        <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;An error occurred in fnOpenDatabase:&quot;</span>, ex)
+ 
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnDisplayDetails</span>():
+ 
+    <span style="color: #888888"># get selection of invoice</span>
+    selection <span style="color: #333333">=</span> pastOrders<span style="color: #333333">.</span>curselection()[<span style="color: #0000DD; font-weight: bold">0</span>]
+    sqlDetails <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;SELECT lineItem FROM lineitems WHERE invoice=&quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(pastOrders<span style="color: #333333">.</span>get(selection))
+ 
+    <span style="color: #008800; font-weight: bold">try</span>:
+        command<span style="color: #333333">.</span>execute(sqlDetails)
+        records<span style="color: #333333">=</span>command<span style="color: #333333">.</span>fetchall()
+        pastOrderDetails<span style="color: #333333">.</span>delete(<span style="color: #0000DD; font-weight: bold">0</span>,END)
+        items <span style="color: #333333">=</span> records[<span style="color: #0000DD; font-weight: bold">0</span>][<span style="color: #0000DD; font-weight: bold">0</span>]<span style="color: #333333">.</span>split(<span style="background-color: #fff0f0">&#39;,&#39;</span>)
+        <span style="color: #008800; font-weight: bold">for</span> item <span style="color: #000000; font-weight: bold">in</span> items:
+            pastOrderDetails<span style="color: #333333">.</span>insert(END, item)
+    <span style="color: #008800; font-weight: bold">except</span> <span style="color: #FF0000; font-weight: bold">Exception</span> <span style="color: #008800; font-weight: bold">as</span> ex:
+        <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;Error in display orders details&quot;</span>)
+        <span style="color: #007020">print</span>(ex)
+ 
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnDisplayPastOrders</span>():
+    sql <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;SELECT invoice FROM lineitems&quot;</span>
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;fnDisPlayPastOrders execute&quot;</span>, sql)
+    command<span style="color: #333333">.</span>execute(sql)
+    records <span style="color: #333333">=</span> command<span style="color: #333333">.</span>fetchall()
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;records&quot;</span>, records)
+    pastOrders<span style="color: #333333">.</span>delete(<span style="color: #0000DD; font-weight: bold">0</span>,END)
+    <span style="color: #008800; font-weight: bold">for</span> row <span style="color: #000000; font-weight: bold">in</span> records:
+        pastOrders<span style="color: #333333">.</span>insert(END, row[<span style="color: #0000DD; font-weight: bold">0</span>])
+ 
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnAddSales</span>():
+    sql <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;INSERT INTO finances (sales, expenses) VALUES (&quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(sales) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;,&quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(expense) <span style="color: #333333">+</span><span style="background-color: #fff0f0">&quot;);&quot;</span>
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;fnAddSales execute&quot;</span>, sql)
+    command<span style="color: #333333">.</span>execute(sql)
+    conn<span style="color: #333333">.</span>commit()
+ 
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnAddInventoryData</span>():
+    sql <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;INSERT INTO inventory (roses, tulips, jasmine, greenery, vases) VALUES (&quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(roseInventory) <span style="color: #333333">+</span>\
+        <span style="background-color: #fff0f0">&quot;,&quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(tulipsInventory) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;,&quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(jasmineInventory) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;,&quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(greeneryInventory) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;,&quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(vasesInventory) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;);&quot;</span>
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;fnAddInventoryData execute&quot;</span>, sql)
+    command<span style="color: #333333">.</span>execute(sql)
+    conn<span style="color: #333333">.</span>commit()
+ 
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnAddLineItems</span>(lineItem):
+    <span style="color: #888888"># fix lineItem tuple to string separated with new line character</span>
+    lineItemStr <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&#39;,&#39;</span><span style="color: #333333">.</span>join(<span style="color: #007020">str</span>(line) <span style="color: #008800; font-weight: bold">for</span> line <span style="color: #000000; font-weight: bold">in</span> lineItem)
+    
+    <span style="color: #888888"># Traverse through lineitems table to check if lineItem is unique</span>
+    sqlGetItems <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;SELECT lineItem FROM lineitems&quot;</span>
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;fnAddLineItems execute&quot;</span>, sqlGetItems)
+    command<span style="color: #333333">.</span>execute(sqlGetItems)
+    records <span style="color: #333333">=</span> command<span style="color: #333333">.</span>fetchall()
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;records&quot;</span>, records)
+    <span style="color: #008800; font-weight: bold">for</span> row <span style="color: #000000; font-weight: bold">in</span> records:
+        <span style="color: #008800; font-weight: bold">if</span> lineItemStr <span style="color: #333333">==</span> row[<span style="color: #0000DD; font-weight: bold">0</span>]:
+            <span style="color: #008800; font-weight: bold">return</span>
+ 
+    invoice <span style="color: #333333">=</span> <span style="color: #007020">len</span>(records) <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>
+    sql <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;INSERT INTO lineitems (invoice, lineItem) VALUES (?, ?);&quot;</span>
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;fnAddLineItems execute&quot;</span>, sql)
+    command<span style="color: #333333">.</span>execute(sql)
+    conn<span style="color: #333333">.</span>commit()
+ 
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnRetrieveData</span>():
+    <span style="color: #008800; font-weight: bold">global</span> sales
+    <span style="color: #008800; font-weight: bold">global</span> expense
+    <span style="color: #008800; font-weight: bold">global</span> roseInventory
+    <span style="color: #008800; font-weight: bold">global</span> tulipsInventory
+    <span style="color: #008800; font-weight: bold">global</span> jasmineInventory
+    <span style="color: #008800; font-weight: bold">global</span> greeneryInventory
+    <span style="color: #008800; font-weight: bold">global</span> vasesInventory
+    <span style="color: #008800; font-weight: bold">global</span> rosesQuantityText, tulipsQuantityText, jasmineQuantityText, greeneryQuantityText
+ 
+    command<span style="color: #333333">.</span>execute(<span style="background-color: #fff0f0">&quot;SELECT sales FROM finances WHERE id = (SELECT MAX(id) FROM finances);&quot;</span>)
+    record_sales <span style="color: #333333">=</span> command<span style="color: #333333">.</span>fetchone()
+    sales <span style="color: #333333">=</span> record_sales[<span style="color: #0000DD; font-weight: bold">0</span>]
+ 
+    command<span style="color: #333333">.</span>execute(<span style="background-color: #fff0f0">&quot;SELECT expenses FROM finances WHERE id = (SELECT MAX(id) FROM finances);&quot;</span>)
+    record_expense <span style="color: #333333">=</span> command<span style="color: #333333">.</span>fetchone()
+    expense <span style="color: #333333">=</span> record_expense[<span style="color: #0000DD; font-weight: bold">0</span>]
+ 
+    command<span style="color: #333333">.</span>execute(<span style="background-color: #fff0f0">&quot;SELECT roses FROM inventory WHERE id = (SELECT MAX(id) FROM inventory);&quot;</span>)
+    record_roses <span style="color: #333333">=</span> command<span style="color: #333333">.</span>fetchone()
+    roseInventory <span style="color: #333333">=</span> record_roses[<span style="color: #0000DD; font-weight: bold">0</span>]
+ 
+    command<span style="color: #333333">.</span>execute(<span style="background-color: #fff0f0">&quot;SELECT tulips FROM inventory WHERE id = (SELECT MAX(id) FROM inventory);&quot;</span>)
+    record_tulips <span style="color: #333333">=</span> command<span style="color: #333333">.</span>fetchone()
+    tulipsInventory <span style="color: #333333">=</span> record_tulips[<span style="color: #0000DD; font-weight: bold">0</span>]
+ 
+    command<span style="color: #333333">.</span>execute(<span style="background-color: #fff0f0">&quot;SELECT jasmine FROM inventory WHERE id = (SELECT MAX(id) FROM inventory);&quot;</span>)
+    record_jasmine <span style="color: #333333">=</span> command<span style="color: #333333">.</span>fetchone()
+    jasmineInventory <span style="color: #333333">=</span> record_jasmine[<span style="color: #0000DD; font-weight: bold">0</span>]
+ 
+    command<span style="color: #333333">.</span>execute(<span style="background-color: #fff0f0">&quot;SELECT greenery FROM inventory WHERE id = (SELECT MAX(id) FROM inventory);&quot;</span>)
+    record_greenery <span style="color: #333333">=</span> command<span style="color: #333333">.</span>fetchone()
+    greeneryInventory <span style="color: #333333">=</span> record_greenery[<span style="color: #0000DD; font-weight: bold">0</span>]
+ 
+    command<span style="color: #333333">.</span>execute(<span style="background-color: #fff0f0">&quot;SELECT vases FROM inventory WHERE id = (SELECT MAX(id) FROM inventory);&quot;</span>)
+    record_vases <span style="color: #333333">=</span> command<span style="color: #333333">.</span>fetchone()
+    vasesInventory <span style="color: #333333">=</span> record_vases[<span style="color: #0000DD; font-weight: bold">0</span>]
+ 
+    expenseText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;{:.2f}&quot;</span><span style="color: #333333">.</span>format(expense)) <span style="color: #888888"># Show expenses</span>
+    salesText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;{:.2f}&quot;</span><span style="color: #333333">.</span>format(sales)) <span style="color: #888888"># Show the result in sales label</span>
+    profit <span style="color: #333333">=</span> sales <span style="color: #333333">-</span> expense <span style="color: #888888"># Define profit formula</span>
+    profitText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;{:.2f}&quot;</span><span style="color: #333333">.</span>format(profit)) <span style="color: #888888"># Show the result in profit label</span>
+ 
+    roseInventoryText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> roseInventory) <span style="color: #888888"># Update inventory from database</span>
+    tulipsInventoryText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> tulipsInventory)
+    jasmineInventoryText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> jasmineInventory)
+    greeneryInventoryText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> greeneryInventory)
+    vasesInventoryText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> vasesInventory)
+ 
+<span style="color: #888888"># Importing the tkinter library</span>
+<span style="color: #888888"># Tkinter is used for the graphics </span>
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">tkinter</span> <span style="color: #008800; font-weight: bold">import</span> <span style="color: #333333">*</span>
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">tkinter</span> <span style="color: #008800; font-weight: bold">import</span> ttk <span style="color: #888888"># Additional library for additional functionality.</span>
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">tkinter</span> <span style="color: #008800; font-weight: bold">import</span> messagebox
+ 
+<span style="color: #888888"># Setting up window</span>
+root<span style="color: #333333">=</span> Tk()
+root<span style="color: #333333">.</span>title(<span style="background-color: #fff0f0">&quot;Project 3&quot;</span>)
+root<span style="color: #333333">.</span>geometry(<span style="background-color: #fff0f0">&quot;1100x500&quot;</span>)
+ 
+<span style="color: #888888"># Setting up each variables&#39; values, which are local variables</span>
+roseInventory <span style="color: #333333">=</span> <span style="color: #6600EE; font-weight: bold">0.00</span>
+tulipsInventory <span style="color: #333333">=</span> <span style="color: #6600EE; font-weight: bold">0.00</span>
+jasmineInventory <span style="color: #333333">=</span> <span style="color: #6600EE; font-weight: bold">0.00</span>
+greeneryInventory <span style="color: #333333">=</span> <span style="color: #6600EE; font-weight: bold">0.00</span>
+vasesInventory <span style="color: #333333">=</span> <span style="color: #6600EE; font-weight: bold">0.00</span>
+subTotalExpense <span style="color: #333333">=</span> <span style="color: #6600EE; font-weight: bold">0.00</span>
+ 
+rosesQuantityText <span style="color: #333333">=</span> <span style="color: #6600EE; font-weight: bold">0.00</span>
+tulipsQuantityText <span style="color: #333333">=</span> <span style="color: #6600EE; font-weight: bold">0.00</span>
+jasmineQuantityText <span style="color: #333333">=</span> <span style="color: #6600EE; font-weight: bold">0.00</span>
+greeneryQuantityText <span style="color: #333333">=</span> <span style="color: #6600EE; font-weight: bold">0.00</span>
+sales <span style="color: #333333">=</span> <span style="color: #6600EE; font-weight: bold">0.00</span>
+profit <span style="color: #333333">=</span> <span style="color: #6600EE; font-weight: bold">0.00</span>
+expense <span style="color: #333333">=</span> <span style="color: #6600EE; font-weight: bold">0.00</span>
+ 
+roseEnd <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+tulipsEnd <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+jasmineEnd <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+greeneryEnd <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+ 
+<span style="color: #888888"># Define collections for the accounts</span>
+roseOrder <span style="color: #333333">=</span> []
+tulipsOrder <span style="color: #333333">=</span> []
+jasmineOrder <span style="color: #333333">=</span> []
+greeneryOrder <span style="color: #333333">=</span> []
+eachOrder <span style="color: #333333">=</span> []
+ 
+<span style="color: #888888"># Determine addInventory checked</span>
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnAddInventory</span>():
+    <span style="color: #008800; font-weight: bold">global</span> roseInventory, tulipsInventory, jasmineInventory, greeneryInventory, vasesInventory, expense, profit
+ 
+    <span style="color: #008800; font-weight: bold">if</span> add100RosesVar<span style="color: #333333">.</span>get(): <span style="color: #888888"># Select this option</span>
+        roseInventory <span style="color: #333333">=</span> roseInventory <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">100</span>  <span style="color: #888888"># Meaning inventory can be added continuously</span>
+        roseInventoryText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> roseInventory) <span style="color: #888888"># the final result is displayed on the label of roseInventoryText</span>
+        expense <span style="color: #333333">=</span> expense <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">100</span>
+ 
+    <span style="color: #008800; font-weight: bold">if</span> add100TulipsVar<span style="color: #333333">.</span>get():
+        tulipsInventory <span style="color: #333333">=</span> tulipsInventory <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">100</span>
+        tulipsInventoryText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> tulipsInventory)
+        expense <span style="color: #333333">=</span> expense <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">75</span>
+ 
+    <span style="color: #008800; font-weight: bold">if</span> add100JasmineVar<span style="color: #333333">.</span>get():
+        jasmineInventory <span style="color: #333333">=</span> jasmineInventory <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">100</span>
+        jasmineInventoryText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> jasmineInventory)
+        expense <span style="color: #333333">=</span> expense <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">85</span>
+ 
+    <span style="color: #008800; font-weight: bold">if</span> add100GreeneryVar<span style="color: #333333">.</span>get():
+        greeneryInventory <span style="color: #333333">=</span> greeneryInventory <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">100</span>
+        greeneryInventoryText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> greeneryInventory)
+        expense <span style="color: #333333">=</span> expense <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">65</span>
+ 
+    <span style="color: #008800; font-weight: bold">if</span> add10VasesVar<span style="color: #333333">.</span>get():
+        vasesInventory <span style="color: #333333">=</span> vasesInventory <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">10</span>
+        vasesInventoryText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> vasesInventory)
+        expense <span style="color: #333333">=</span> expense <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">50</span>
+ 
+    add100RosesVar<span style="color: #333333">.</span>set(<span style="color: #008800; font-weight: bold">False</span>)
+    add100TulipsVar<span style="color: #333333">.</span>set(<span style="color: #008800; font-weight: bold">False</span>)
+    add100JasmineVar<span style="color: #333333">.</span>set(<span style="color: #008800; font-weight: bold">False</span>)
+    add100GreeneryVar<span style="color: #333333">.</span>set(<span style="color: #008800; font-weight: bold">False</span>)
+    add10VasesVar<span style="color: #333333">.</span>set(<span style="color: #008800; font-weight: bold">False</span>)
+ 
+    <span style="color: #888888"># Determine the expense formula and show in the expensesText Label</span>
+    expenseText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;{:.2f}&quot;</span><span style="color: #333333">.</span>format(expense))
+    profit <span style="color: #333333">=</span> sales <span style="color: #333333">-</span> expense <span style="color: #888888"># Define profit formula</span>
+    profitText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;{:.2f}&quot;</span><span style="color: #333333">.</span>format(profit)) <span style="color: #888888"># Show the result in profit label</span>
+ 
+    <span style="color: #888888"># Store into Database</span>
+    fnAddSales()
+    fnAddInventoryData()
+ 
+<span style="color: #888888"># Determine Add To Order checked</span>
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnAddToOrder</span>():
+    <span style="color: #008800; font-weight: bold">global</span> rosesQuantityText, tulipsQuantityText, jasmineQuantityText, greeneryQuantityText
+    
+    <span style="color: #008800; font-weight: bold">try</span>:
+        rosesQuantityText <span style="color: #333333">=</span> <span style="color: #007020">int</span>(rosesQuantity<span style="color: #333333">.</span>get()) <span style="color: #888888"># Gets the number from the input data and convert it to int</span>
+        tulipsQuantityText <span style="color: #333333">=</span> <span style="color: #007020">int</span>(tulipsQuantity<span style="color: #333333">.</span>get())
+        jasmineQuantityText <span style="color: #333333">=</span> <span style="color: #007020">int</span>(jasmineQuantity<span style="color: #333333">.</span>get())
+        greeneryQuantityText <span style="color: #333333">=</span> <span style="color: #007020">int</span>(greeneryQuantity<span style="color: #333333">.</span>get())
+ 
+        <span style="color: #008800; font-weight: bold">if</span> rosesQuantityText <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+            messagebox<span style="color: #333333">.</span>showinfo(<span style="background-color: #fff0f0">&quot;Error&quot;</span>, <span style="background-color: #fff0f0">&quot;Please enter a vaild number greater or euqal zero.&quot;</span>)
+        <span style="color: #008800; font-weight: bold">else</span>:
+            roseOrder<span style="color: #333333">.</span>insert(<span style="color: #0000DD; font-weight: bold">0</span>,rosesQuantityText) <span style="color: #888888"># print quantities collection list for rose</span>
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;roseOrder:&quot;</span>, roseOrder) <span style="color: #888888"># print the list of rose order</span>
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;roseOrderTotal:&quot;</span>, <span style="color: #007020">sum</span>(roseOrder))
+ 
+        <span style="color: #008800; font-weight: bold">if</span> tulipsQuantityText <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+            messagebox<span style="color: #333333">.</span>showinfo(<span style="background-color: #fff0f0">&quot;Error&quot;</span>, <span style="background-color: #fff0f0">&quot;Please enter a vaild number greater or euqal zero.&quot;</span>)
+        <span style="color: #008800; font-weight: bold">else</span>:
+            tulipsOrder<span style="color: #333333">.</span>insert(<span style="color: #0000DD; font-weight: bold">0</span>,tulipsQuantityText)
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;tulipsOrder:&quot;</span>, tulipsOrder)
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;tulipsOrderTotal:&quot;</span>, <span style="color: #007020">sum</span>(tulipsOrder))
+ 
+        <span style="color: #008800; font-weight: bold">if</span> jasmineQuantityText <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+            messagebox<span style="color: #333333">.</span>showinfo(<span style="background-color: #fff0f0">&quot;Error&quot;</span>, <span style="background-color: #fff0f0">&quot;Please enter a vaild number greater or euqal zero.&quot;</span>)
+        <span style="color: #008800; font-weight: bold">else</span>:
+            jasmineOrder<span style="color: #333333">.</span>insert(<span style="color: #0000DD; font-weight: bold">0</span>,jasmineQuantityText)
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;jasmineOrder:&quot;</span>, jasmineOrder)
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;jasmineOrderTotal:&quot;</span>, <span style="color: #007020">sum</span>(jasmineOrder))
+ 
+        <span style="color: #008800; font-weight: bold">if</span> greeneryQuantityText <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+            messagebox<span style="color: #333333">.</span>showinfo(<span style="background-color: #fff0f0">&quot;Error&quot;</span>, <span style="background-color: #fff0f0">&quot;Please enter a vaild number greater or euqal zero.&quot;</span>)
+        <span style="color: #008800; font-weight: bold">else</span>:
+            greeneryOrder<span style="color: #333333">.</span>insert(<span style="color: #0000DD; font-weight: bold">0</span>,greeneryQuantityText)
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;greeneryOrder:&quot;</span>,greeneryOrder)
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;greeneryOrderTotal:&quot;</span>, <span style="color: #007020">sum</span>(greeneryOrder))
+        
+        rosesQuantity<span style="color: #333333">.</span>delete(<span style="color: #0000DD; font-weight: bold">0</span>, END)
+        tulipsQuantity<span style="color: #333333">.</span>delete(<span style="color: #0000DD; font-weight: bold">0</span>, END)
+        jasmineQuantity<span style="color: #333333">.</span>delete(<span style="color: #0000DD; font-weight: bold">0</span>, END)
+        greeneryQuantity<span style="color: #333333">.</span>delete(<span style="color: #0000DD; font-weight: bold">0</span>, END)
+ 
+        rosesQuantity<span style="color: #333333">.</span>insert(END, <span style="background-color: #fff0f0">&quot;0&quot;</span>)
+        tulipsQuantity<span style="color: #333333">.</span>insert(END, <span style="background-color: #fff0f0">&quot;0&quot;</span>)
+        jasmineQuantity<span style="color: #333333">.</span>insert(END, <span style="background-color: #fff0f0">&quot;0&quot;</span>)
+        greeneryQuantity<span style="color: #333333">.</span>insert(END, <span style="background-color: #fff0f0">&quot;0&quot;</span>)
+ 
+        <span style="color: #888888"># Update Output</span>
+        fnDisplayItemLines()
+        
+    <span style="color: #008800; font-weight: bold">except</span> <span style="color: #FF0000; font-weight: bold">ValueError</span>:
+        messagebox<span style="color: #333333">.</span>showinfo(<span style="background-color: #fff0f0">&quot;Error&quot;</span>,<span style="background-color: #fff0f0">&quot;Please enter a vaild numer for the order.&quot;</span>)
+ 
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnCancelOrder</span>():
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;fnCancelOrder called&quot;</span>)
+ 
+    <span style="color: #888888"># Resetting listbox</span>
+    lineItems<span style="color: #333333">.</span>delete(<span style="color: #0000DD; font-weight: bold">0</span>,END)
+ 
+    roseOrder<span style="color: #333333">.</span>clear()
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;roseOrder:&quot;</span>, roseOrder)
+    tulipsOrder<span style="color: #333333">.</span>clear()
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;tulipsOrder:&quot;</span>, tulipsOrder)
+    jasmineOrder<span style="color: #333333">.</span>clear()
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;jasmineOrder:&quot;</span>, jasmineOrder)
+    greeneryOrder<span style="color: #333333">.</span>clear()
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;greeneryOrder:&quot;</span>,greeneryOrder)
+ 
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnDisplayItemLines</span>():
+    <span style="color: #008800; font-weight: bold">global</span> roseEnd, tulipsEnd, jasmineEnd, greeneryEnd
+ 
+    roseEnd <span style="color: #333333">=</span> roseOrder[<span style="color: #0000DD; font-weight: bold">0</span>]
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;roseEnd: &quot;</span>, roseEnd)
+    tulipsEnd <span style="color: #333333">=</span> tulipsOrder[<span style="color: #0000DD; font-weight: bold">0</span>]
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;tulipsEnd: &quot;</span>, tulipsEnd)
+    jasmineEnd <span style="color: #333333">=</span> jasmineOrder[<span style="color: #0000DD; font-weight: bold">0</span>]
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;jasmineEnd: &quot;</span>, jasmineEnd)
+    greeneryEnd <span style="color: #333333">=</span> greeneryOrder[<span style="color: #0000DD; font-weight: bold">0</span>]
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;greeneryEnd: &quot;</span>, greeneryEnd)
+ 
+    eachOrder <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Rose: &quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(roseEnd) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot; | &quot;</span> <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;Tulips: &quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(tulipsEnd) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot; | &quot;</span> <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;Jasmine: &quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(jasmineEnd) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot; | &quot;</span> <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;Greenery: &quot;</span><span style="color: #333333">+</span> <span style="color: #007020">str</span>(greeneryEnd),
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;eachOrder:&quot;</span>, eachOrder)
+ 
+    <span style="color: #888888"># Display each order in the listbox</span>
+    <span style="color: #008800; font-weight: bold">for</span> orders <span style="color: #000000; font-weight: bold">in</span> (eachOrder):
+        lineItems<span style="color: #333333">.</span>insert(END, orders)
+ 
+<span style="color: #888888"># Determine PlaceOrder checked</span>
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnPlaceOrder</span>():
+    <span style="color: #008800; font-weight: bold">global</span> rosesQuantityText, tulipsQuantityText, jasmineQuantityText, greeneryQuantityText, sales, profit, subTotalExpense
+    <span style="color: #008800; font-weight: bold">global</span> roseInventory, tulipsInventory, jasmineInventory, greeneryInventory, vasesInventory
+ 
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;fnPlaceOrder called&quot;</span>)
+    <span style="color: #008800; font-weight: bold">try</span>:
+        enough <span style="color: #333333">=</span> <span style="color: #008800; font-weight: bold">True</span>
+       
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">sum</span>(roseOrder) <span style="color: #333333">&gt;</span> roseInventory:
+            enough <span style="color: #333333">=</span> <span style="color: #008800; font-weight: bold">False</span>
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;Not enough inventory of rose&quot;</span>)
+            messagebox<span style="color: #333333">.</span>showinfo(<span style="background-color: #fff0f0">&quot;Error&quot;</span>,<span style="background-color: #fff0f0">&quot;Do not have enough inventory of rose.&quot;</span>)
+            
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">sum</span>(tulipsOrder) <span style="color: #333333">&gt;</span> tulipsInventory:
+            enough <span style="color: #333333">=</span> <span style="color: #008800; font-weight: bold">False</span>
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;Not enough inventory of tulips&quot;</span>)
+            messagebox<span style="color: #333333">.</span>showinfo(<span style="background-color: #fff0f0">&quot;Error&quot;</span>,<span style="background-color: #fff0f0">&quot;Do not have enough inventory of tulips.&quot;</span>)
+            
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">sum</span>(jasmineOrder) <span style="color: #333333">&gt;</span> jasmineInventory:
+            enough <span style="color: #333333">=</span> <span style="color: #008800; font-weight: bold">False</span>
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;Not enough inventory of jasmine&quot;</span>)
+            messagebox<span style="color: #333333">.</span>showinfo(<span style="background-color: #fff0f0">&quot;Error&quot;</span>,<span style="background-color: #fff0f0">&quot;Do not have enough inventory of jasmine.&quot;</span>)
+            
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">sum</span>(greeneryOrder) <span style="color: #333333">&gt;</span> greeneryInventory:
+            enough <span style="color: #333333">=</span> <span style="color: #008800; font-weight: bold">False</span>
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;Not enough inventory of greenery&quot;</span>)
+            messagebox<span style="color: #333333">.</span>showinfo(<span style="background-color: #fff0f0">&quot;Error&quot;</span>,<span style="background-color: #fff0f0">&quot;Do not have enough inventory of greenery.&quot;</span>)
+ 
+        <span style="color: #008800; font-weight: bold">if</span> vasesInventory <span style="color: #333333">&lt;=</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+            enough <span style="color: #333333">=</span> <span style="color: #008800; font-weight: bold">False</span>
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;Not enough inventory of vase&quot;</span>)
+            messagebox<span style="color: #333333">.</span>showinfo(<span style="background-color: #fff0f0">&quot;Error&quot;</span>,<span style="background-color: #fff0f0">&quot;Do not have enough vase.&quot;</span>)
+ 
+        <span style="color: #008800; font-weight: bold">if</span> enough:
+ 
+            <span style="color: #888888"># When current conditions are met, Inventory can deduct the total quantity required by Orders</span>
+            roseInventory <span style="color: #333333">=</span> roseInventory <span style="color: #333333">-</span> <span style="color: #007020">sum</span>(roseOrder) <span style="color: #888888"># The total inventory = inventory bought - inventory sold</span>
+            roseInventoryText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> roseInventory) <span style="color: #888888"># Redisplay with new inventory</span>
+            tulipsInventory <span style="color: #333333">=</span> tulipsInventory <span style="color: #333333">-</span> <span style="color: #007020">sum</span>(tulipsOrder)
+            tulipsInventoryText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> tulipsInventory)
+            jasmineInventory <span style="color: #333333">=</span> jasmineInventory <span style="color: #333333">-</span> <span style="color: #007020">sum</span>(jasmineOrder)
+            jasmineInventoryText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> jasmineInventory)
+            greeneryInventory <span style="color: #333333">=</span> greeneryInventory <span style="color: #333333">-</span> <span style="color: #007020">sum</span>(greeneryOrder)
+            greeneryInventoryText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> greeneryInventory)
+                        
+            totalOrderQuantity <span style="color: #333333">=</span> <span style="color: #007020">sum</span>(roseOrder)<span style="color: #333333">+</span><span style="color: #007020">sum</span>(tulipsOrder)<span style="color: #333333">+</span><span style="color: #007020">sum</span>(jasmineOrder)<span style="color: #333333">+</span><span style="color: #007020">sum</span>(greeneryOrder)
+ 
+            <span style="color: #888888"># Clear the order calculated before</span>
+            roseOrder<span style="color: #333333">.</span>clear()
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;roseOrder:&quot;</span>, roseOrder)
+            tulipsOrder<span style="color: #333333">.</span>clear()
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;tulipsOrder:&quot;</span>, tulipsOrder)
+            jasmineOrder<span style="color: #333333">.</span>clear()
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;jasmineOrder:&quot;</span>, jasmineOrder)
+            greeneryOrder<span style="color: #333333">.</span>clear()
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;greeneryOrder:&quot;</span>,greeneryOrder)
+ 
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;roseOrderTotal:&quot;</span>, <span style="color: #007020">sum</span>(roseOrder))    
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;tulipsOrderTotal:&quot;</span>, <span style="color: #007020">sum</span>(tulipsOrder))
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;jasmineOrderTotal:&quot;</span>, <span style="color: #007020">sum</span>(jasmineOrder))
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;greeneryOrderTotal:&quot;</span>, <span style="color: #007020">sum</span>(greeneryOrder))
+ 
+            <span style="color: #888888"># when the order is submitted, clear the listbox(lineItems)</span>
+            lineItem <span style="color: #333333">=</span> lineItems<span style="color: #333333">.</span>get(<span style="color: #0000DD; font-weight: bold">0</span>, END)
+            lineItems<span style="color: #333333">.</span>delete(<span style="color: #0000DD; font-weight: bold">0</span>, END)
+ 
+            <span style="color: #888888"># Cannot place order if there is no flower</span>
+            <span style="color: #008800; font-weight: bold">if</span> totalOrderQuantity <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+ 
+                vasesInventory <span style="color: #333333">=</span> vasesInventory <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">1</span> <span style="color: #888888"># Each order will use a vase</span>
+                vasesInventoryText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> vasesInventory)
+ 
+                sales <span style="color: #333333">=</span> sales <span style="color: #333333">+</span> <span style="color: #6600EE; font-weight: bold">30.00</span> <span style="color: #888888"># Increase profit by $30 per transaction</span>
+                salesText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;{:.2f}&quot;</span><span style="color: #333333">.</span>format(sales)) <span style="color: #888888"># Show the result in sales label</span>
+ 
+                profit <span style="color: #333333">=</span> sales <span style="color: #333333">-</span> expense <span style="color: #888888"># Define profit formula</span>
+                profitText<span style="color: #333333">.</span>config(text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;{:.2f}&quot;</span><span style="color: #333333">.</span>format(profit)) <span style="color: #888888"># Show the result in profit label</span>
+            <span style="color: #008800; font-weight: bold">else</span>:
+                messagebox<span style="color: #333333">.</span>showinfo(<span style="background-color: #fff0f0">&quot;Error&quot;</span>,<span style="background-color: #fff0f0">&quot;Please enter a vaild order.&quot;</span>)
+                <span style="color: #008800; font-weight: bold">return</span>
+ 
+            <span style="color: #888888"># Store updated sales data and inventory data into database</span>
+            fnAddSales()
+            fnAddInventoryData()
+            fnAddLineItems(lineItem)
+            fnDisplayPastOrders()
+ 
+        <span style="color: #008800; font-weight: bold">else</span>:
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;Do not have enough inventory&quot;</span>)
+    <span style="color: #008800; font-weight: bold">except</span>:
+        <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;Unexpected error:&quot;</span>, sys<span style="color: #333333">.</span>exc_info()[<span style="color: #0000DD; font-weight: bold">0</span>])
+        messagebox<span style="color: #333333">.</span>showinfo(<span style="background-color: #fff0f0">&quot;Error&quot;</span>,<span style="background-color: #fff0f0">&quot;Do not have enough inventory&quot;</span>)
+ 
+<span style="color: #888888">#Setting up each row</span>
+<span style="color: #888888"># Row = 0</span>
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;INVENTORY&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, column <span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, sticky<span style="color: #333333">=</span>W)
+Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;            &quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">2</span>, sticky <span style="color: #333333">=</span>W) 
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;ADD TO INVENTORY&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, sticky <span style="color: #333333">=</span>W)
+Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;            &quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">5</span>, sticky <span style="color: #333333">=</span>W)
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;ORDER FORM&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, column<span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">6</span>, sticky <span style="color: #333333">=</span>W)
+Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;            &quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">8</span>, sticky <span style="color: #333333">=</span>W)
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;FINANCIAL DATA&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">9</span>, sticky <span style="color: #333333">=</span>W)
+ 
+<span style="color: #888888"># Row = 1, Roses</span>
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Roses:&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, sticky <span style="color: #333333">=</span>W)
+roseInventoryText <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;0&quot;</span>)
+roseInventoryText<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>, sticky <span style="color: #333333">=</span> W)
+add100RosesVar <span style="color: #333333">=</span> BooleanVar()
+add100Roses <span style="color: #333333">=</span> Checkbutton(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Add 100 Roses&quot;</span>, variable <span style="color: #333333">=</span> add100RosesVar) <span style="color: #888888"># Insert a checkbox</span>
+add100Roses<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, sticky <span style="color: #333333">=</span>W)
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Roses Quantity:&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">6</span>, sticky <span style="color: #333333">=</span> W)
+rosesQuantity <span style="color: #333333">=</span> Entry(root, width<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>) <span style="color: #888888"># Insert a input box</span>
+rosesQuantity<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>, column <span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">7</span>, sticky <span style="color: #333333">=</span>W)
+rosesQuantity<span style="color: #333333">.</span>insert(END,<span style="background-color: #fff0f0">&quot;0&quot;</span>)  <span style="color: #888888"># showing in the entrybox &quot;0&quot;</span>
+ 
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Sales:&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">9</span>, sticky <span style="color: #333333">=</span>W)
+Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;$&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>, sticky <span style="color: #333333">=</span>W)
+salesText <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;0.00&quot;</span>)
+salesText<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">11</span>, sticky <span style="color: #333333">=</span> W)
+ 
+<span style="color: #888888"># Row = 2, Tulips</span>
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Tulips:&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">2</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, sticky <span style="color: #333333">=</span>W)
+tulipsInventoryText <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;0&quot;</span>)
+tulipsInventoryText<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">2</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>, sticky <span style="color: #333333">=</span> W)
+add100TulipsVar <span style="color: #333333">=</span> BooleanVar()
+add100Tulips <span style="color: #333333">=</span> Checkbutton(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Add 100 Tulips&quot;</span>, variable <span style="color: #333333">=</span> add100TulipsVar)
+add100Tulips<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">2</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, sticky <span style="color: #333333">=</span>W)
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Tulips Quantity:&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">2</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">6</span>, sticky <span style="color: #333333">=</span> W)
+tulipsQuantity <span style="color: #333333">=</span> Entry(root, width<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>)
+tulipsQuantity<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">2</span>, column <span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">7</span>, sticky <span style="color: #333333">=</span>W)
+tulipsQuantity<span style="color: #333333">.</span>insert(END,<span style="background-color: #fff0f0">&quot;0&quot;</span>)
+ 
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Expenses:&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">2</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">9</span>, sticky <span style="color: #333333">=</span>W)
+Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;$&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">2</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>, sticky <span style="color: #333333">=</span>W)
+expenseText <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;0.00&quot;</span>)
+expenseText<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">2</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">11</span>, sticky <span style="color: #333333">=</span> W)
+ 
+<span style="color: #888888"># Row = 3, Jasmine</span>
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Jasmine:&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, sticky <span style="color: #333333">=</span>W)
+jasmineInventoryText <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;0&quot;</span>)
+jasmineInventoryText<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>, sticky <span style="color: #333333">=</span> W)
+add100JasmineVar <span style="color: #333333">=</span> BooleanVar()
+add100Jasmine <span style="color: #333333">=</span> Checkbutton(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Add 100 Jasmine&quot;</span>, variable <span style="color: #333333">=</span> add100JasmineVar)
+add100Jasmine<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, sticky <span style="color: #333333">=</span>W)
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Jasmine Quantity:&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">6</span>, sticky <span style="color: #333333">=</span> W)
+jasmineQuantity <span style="color: #333333">=</span> Entry(root, width<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>)
+jasmineQuantity<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, column <span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">7</span>, sticky <span style="color: #333333">=</span>W)
+jasmineQuantity<span style="color: #333333">.</span>insert(END,<span style="background-color: #fff0f0">&quot;0&quot;</span>)
+ 
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Profit:&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">9</span>, sticky <span style="color: #333333">=</span>W)
+Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;$&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>, sticky <span style="color: #333333">=</span>W)
+profitText <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;0.00&quot;</span>)
+profitText<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">11</span>, sticky <span style="color: #333333">=</span> W)
+ 
+<span style="color: #888888"># Row = 4, Greenery</span>
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Greenery:&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">4</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, sticky <span style="color: #333333">=</span>W)
+greeneryInventoryText <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;0&quot;</span>)
+greeneryInventoryText<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">4</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>, sticky <span style="color: #333333">=</span> W)
+add100GreeneryVar <span style="color: #333333">=</span> BooleanVar()
+add100Greenery <span style="color: #333333">=</span> Checkbutton(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Add 100 Greenery&quot;</span>, variable <span style="color: #333333">=</span> add100GreeneryVar)
+add100Greenery<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">4</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, sticky <span style="color: #333333">=</span>W)
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Greenery Quantity:&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">4</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">6</span>, sticky <span style="color: #333333">=</span> W)
+greeneryQuantity <span style="color: #333333">=</span> Entry(root, width<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>)
+greeneryQuantity<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">4</span>, column <span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">7</span>, sticky <span style="color: #333333">=</span>W)
+greeneryQuantity<span style="color: #333333">.</span>insert(END,<span style="background-color: #fff0f0">&quot;0&quot;</span>)
+ 
+<span style="color: #888888"># Row = 5, Vases</span>
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Vases:&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">5</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, sticky <span style="color: #333333">=</span>W)
+vasesInventoryText <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;0&quot;</span>)
+vasesInventoryText<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">5</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>, sticky <span style="color: #333333">=</span> W)
+add10VasesVar <span style="color: #333333">=</span> BooleanVar()
+add10Vases <span style="color: #333333">=</span> Checkbutton(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Add 10 Vases&quot;</span>, variable <span style="color: #333333">=</span> add10VasesVar)
+add10Vases<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">5</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, sticky <span style="color: #333333">=</span>W)
+ 
+<span style="color: #888888"># Row 7 Line Items</span>
+Label(root,text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;LINE ITEMS&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">7</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">6</span>, sticky <span style="color: #333333">=</span> W)
+lineItemsFrame <span style="color: #333333">=</span> Frame(root)
+lineItemsFrame<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">8</span>,
+ rowspan<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">6</span>, sticky<span style="color: #333333">=</span>W, columnspan <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">5</span>)
+scrollbar <span style="color: #333333">=</span> Scrollbar(lineItemsFrame)
+scrollbar<span style="color: #333333">.</span>pack(side<span style="color: #333333">=</span>RIGHT, fill<span style="color: #333333">=</span>Y)
+lineItems <span style="color: #333333">=</span> Listbox(lineItemsFrame, height<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">5</span>, width <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">40</span>, yscrollcommand<span style="color: #333333">=</span>scrollbar<span style="color: #333333">.</span>set)
+lineItems<span style="color: #333333">.</span>pack()
+scrollbar<span style="color: #333333">.</span>config(command<span style="color: #333333">=</span>lineItems<span style="color: #333333">.</span>yview)
+ 
+<span style="color: #888888"># Row 14 Past Order Details</span>
+Label(root,text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;PAST ORDER DETAILS&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">14</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">6</span>, sticky <span style="color: #333333">=</span> W)
+pastOrderDetailsFrame <span style="color: #333333">=</span> Frame(root)
+pastOrderDetailsFrame<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">15</span>, rowspan<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">6</span>, sticky<span style="color: #333333">=</span>W, columnspan <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">5</span>)
+scrollbar <span style="color: #333333">=</span> Scrollbar(pastOrderDetailsFrame)
+scrollbar<span style="color: #333333">.</span>pack(side<span style="color: #333333">=</span>RIGHT, fill<span style="color: #333333">=</span>Y)
+pastOrderDetails <span style="color: #333333">=</span> Listbox(pastOrderDetailsFrame, height<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">5</span>, width <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">40</span>, yscrollcommand<span style="color: #333333">=</span>scrollbar<span style="color: #333333">.</span>set)
+pastOrderDetails<span style="color: #333333">.</span>pack()
+scrollbar<span style="color: #333333">.</span>config(command<span style="color: #333333">=</span>pastOrderDetails<span style="color: #333333">.</span>yview)
+ 
+<span style="color: #888888"># Row 14 Past Orders </span>
+Label(root,text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;PAST ORDERS&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">14</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, sticky <span style="color: #333333">=</span> W)
+pastOrdersFrame <span style="color: #333333">=</span> Frame(root)
+pastOrdersFrame<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">15</span>, rowspan<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, sticky<span style="color: #333333">=</span>W, columnspan <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">5</span>)
+scrollbar <span style="color: #333333">=</span> Scrollbar(pastOrdersFrame)
+scrollbar<span style="color: #333333">.</span>pack(side<span style="color: #333333">=</span>RIGHT, fill<span style="color: #333333">=</span>Y)
+pastOrders <span style="color: #333333">=</span> Listbox(pastOrdersFrame, height<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">5</span>, width <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">40</span>, yscrollcommand<span style="color: #333333">=</span>scrollbar<span style="color: #333333">.</span>set)
+pastOrders<span style="color: #333333">.</span>pack()
+scrollbar<span style="color: #333333">.</span>config(command<span style="color: #333333">=</span>pastOrders<span style="color: #333333">.</span>yview)
+ 
+<span style="color: #888888"># Setting up buttons</span>
+Button(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Add to Order&quot;</span>, command <span style="color: #333333">=</span> fnAddToOrder)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">5</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">7</span>, sticky <span style="color: #333333">=</span>W)
+Button(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Add To Inventory&quot;</span>, command <span style="color: #333333">=</span> fnAddInventory)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">6</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, sticky <span style="color: #333333">=</span>W)
+Button(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Place Order&quot;</span>, command <span style="color: #333333">=</span> fnPlaceOrder)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">12</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">6</span>, sticky <span style="color: #333333">=</span> W)
+Button(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Cancel Order&quot;</span>, command <span style="color: #333333">=</span> fnCancelOrder)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">12</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">7</span>, sticky <span style="color: #333333">=</span> W)
+Button(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Show Order Details&quot;</span>, command <span style="color: #333333">=</span> fnDisplayDetails)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">20</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, sticky <span style="color: #333333">=</span> W)
+ 
+fnOpenDatabase()
+fnRetrieveData()
+fnDisplayPastOrders()
+ 
+<span style="color: #888888"># Run the window </span>
+root<span style="color: #333333">.</span>mainloop()
+</pre></div>
