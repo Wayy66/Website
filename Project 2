@@ -1,0 +1,358 @@
+<style>
+#overflowCode {
+  width: auto;
+  height: 50VH;
+  overflow: scroll;
+  background: #ffffff; 
+  border:solid gray;
+  border-width:.1em .1em .1em .8em; 
+  padding:.2em .6em;
+}
+</style>
+
+<pre style="margin: 0; line-height: 125%"><div id="overflowCode">
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">tkinter</span> <span style="color: #008800; font-weight: bold">import</span> <span style="color: #333333">*</span> 
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">tkinter</span> <span style="color: #008800; font-weight: bold">import</span> ttk
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">tkinter</span> <span style="color: #008800; font-weight: bold">as</span> <span style="color: #0e84b5; font-weight: bold">tk</span>
+
+root <span style="color: #333333">=</span> Tk() 
+root<span style="color: #333333">.</span>title(<span style="background-color: #fff0f0">&quot;Busch_Project_2&quot;</span>)  
+root<span style="color: #333333">.</span>geometry(<span style="background-color: #fff0f0">&quot;1000x600&quot;</span>) 
+
+<span style="color: #888888">#To track the number of order(s) added or deleted</span>
+Order_num <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+
+Rose_num <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+Tulip_num <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+Jasmine_num <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+Green_num <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+Vase_num <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+Sale_num <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+Expense_num <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+
+Rose_list <span style="color: #333333">=</span> []
+Tulip_list <span style="color: #333333">=</span> []
+Jasmine_list <span style="color: #333333">=</span> []
+Green_list <span style="color: #333333">=</span> []
+Vase_list <span style="color: #333333">=</span> []
+
+Rose_track <span style="color: #333333">=</span> []
+Tulip_track <span style="color: #333333">=</span> []
+Jasmine_track <span style="color: #333333">=</span> []
+Green_track <span style="color: #333333">=</span> []
+Vase_track <span style="color: #333333">=</span> []
+
+Track_count <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+
+<span style="color: #888888">#FUNCTION</span>
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">addInventory</span>():
+    <span style="color: #008800; font-weight: bold">global</span> Rose_num
+    <span style="color: #008800; font-weight: bold">global</span> Tulip_num
+    <span style="color: #008800; font-weight: bold">global</span> Jasmine_num
+    <span style="color: #008800; font-weight: bold">global</span> Green_num
+    <span style="color: #008800; font-weight: bold">global</span> Vase_num
+    <span style="color: #008800; font-weight: bold">global</span> Sale_num
+    <span style="color: #008800; font-weight: bold">global</span> Expense_num
+
+    <span style="color: #008800; font-weight: bold">if</span> add_rose<span style="color: #333333">.</span>get() <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>:
+        Rose_num <span style="color: #333333">=</span> Rose_num <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">100</span>
+        Expense_num <span style="color: #333333">=</span> Expense_num <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">100</span>
+
+    <span style="color: #008800; font-weight: bold">if</span> add_tulip<span style="color: #333333">.</span>get() <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>:
+        Tulip_num <span style="color: #333333">=</span> Tulip_num <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">100</span>
+        Expense_num <span style="color: #333333">=</span> Expense_num <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">75</span>
+
+    <span style="color: #008800; font-weight: bold">if</span> add_jasmine<span style="color: #333333">.</span>get() <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>: 
+        Jasmine_num <span style="color: #333333">=</span> Jasmine_num <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">100</span>
+        Expense_num <span style="color: #333333">=</span> Expense_num <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">85</span>
+
+    <span style="color: #008800; font-weight: bold">if</span> add_green<span style="color: #333333">.</span>get() <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>:
+        Green_num <span style="color: #333333">=</span> Green_num <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">100</span>
+        Expense_num <span style="color: #333333">=</span> Expense_num <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">65</span>
+
+    <span style="color: #008800; font-weight: bold">if</span> add_vase<span style="color: #333333">.</span>get() <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>:
+        Vase_num <span style="color: #333333">=</span> Vase_num <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">10</span> 
+        Expense_num <span style="color: #333333">=</span> Expense_num <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">50</span>
+
+    rose_output<span style="color: #333333">.</span>config(text<span style="color: #333333">=</span>Rose_num)
+    tulip_output<span style="color: #333333">.</span>config(text<span style="color: #333333">=</span>Tulip_num)
+    jasmine_output<span style="color: #333333">.</span>config(text<span style="color: #333333">=</span>Jasmine_num)
+    green_output<span style="color: #333333">.</span>config(text<span style="color: #333333">=</span>Green_num)
+    vase_output<span style="color: #333333">.</span>config(text<span style="color: #333333">=</span>Vase_num)
+    expenses_output<span style="color: #333333">.</span>config(text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&#39;${:,.2f}&#39;</span><span style="color: #333333">.</span>format(Expense_num))
+
+    sale1 <span style="color: #333333">=</span> Sale_num
+    expense1 <span style="color: #333333">=</span> Expense_num
+
+    profit1 <span style="color: #333333">=</span> sale1 <span style="color: #333333">-</span> expense1
+
+    profit_output<span style="color: #333333">.</span>config(text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&#39;${:,.2f}&#39;</span><span style="color: #333333">.</span>format(profit1))
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">AddOrder</span> (): 
+
+    <span style="color: #008800; font-weight: bold">global</span> Order_num
+
+    rose1 <span style="color: #333333">=</span> <span style="color: #007020">int</span>(rose_order<span style="color: #333333">.</span>get())
+    tulip1 <span style="color: #333333">=</span> <span style="color: #007020">int</span>(tulip_order<span style="color: #333333">.</span>get())
+    jasmine1 <span style="color: #333333">=</span> <span style="color: #007020">int</span>(jasmine_order<span style="color: #333333">.</span>get())
+    green1 <span style="color: #333333">=</span> <span style="color: #007020">int</span>(greenery_order<span style="color: #333333">.</span>get())
+
+    <span style="color: #008800; font-weight: bold">if</span> rose1 <span style="color: #333333">!=</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #000000; font-weight: bold">or</span> tulip1 <span style="color: #333333">!=</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #000000; font-weight: bold">or</span> jasmine1 <span style="color: #333333">!=</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #000000; font-weight: bold">or</span> green1 <span style="color: #333333">!=</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+        Order_num <span style="color: #333333">=</span> Order_num <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>
+        Order<span style="color: #333333">.</span>insert(END, <span style="background-color: #fff0f0">&quot;BEGIN ORDER BATCH NUMBER:&quot;</span>, Order_num)
+        Vase_list<span style="color: #333333">.</span>append(<span style="color: #0000DD; font-weight: bold">1</span>)
+        Order<span style="color: #333333">.</span>insert(END, <span style="background-color: #fff0f0">&quot;Vase added:&quot;</span>, <span style="color: #0000DD; font-weight: bold">1</span>)
+
+        Rose_list<span style="color: #333333">.</span>append(rose1)
+        Tulip_list<span style="color: #333333">.</span>append(tulip1)
+        Jasmine_list<span style="color: #333333">.</span>append(jasmine1)
+        Green_list<span style="color: #333333">.</span>append(green1)
+
+
+        <span style="color: #008800; font-weight: bold">if</span> rose1 <span style="color: #333333">!=</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+            Order<span style="color: #333333">.</span>insert(END, <span style="background-color: #fff0f0">&quot;Roses added:&quot;</span>, rose1)
+
+        <span style="color: #008800; font-weight: bold">if</span> tulip1 <span style="color: #333333">!=</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+            Order<span style="color: #333333">.</span>insert(END, <span style="background-color: #fff0f0">&quot;Tulips added:&quot;</span>, tulip1)
+
+        <span style="color: #008800; font-weight: bold">if</span> jasmine1 <span style="color: #333333">!=</span> <span style="color: #0000DD; font-weight: bold">0</span>: 
+            Order<span style="color: #333333">.</span>insert(END, <span style="background-color: #fff0f0">&quot;Jasmine added:&quot;</span>, jasmine1)    
+
+        <span style="color: #008800; font-weight: bold">if</span> green1 <span style="color: #333333">!=</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+            Order<span style="color: #333333">.</span>insert(END, <span style="background-color: #fff0f0">&quot;Greens added:&quot;</span>, green1)
+
+    <span style="color: #008800; font-weight: bold">else</span>: 
+
+        Order<span style="color: #333333">.</span>insert(END, <span style="background-color: #fff0f0">&quot;NO ORDER INSERTED&quot;</span>, <span style="background-color: #fff0f0">&quot;LATEST BATCH NUM:&quot;</span>, Order_num)
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">CancelOrder</span>():
+
+    <span style="color: #008800; font-weight: bold">global</span> Order_num 
+    
+    Order<span style="color: #333333">.</span>insert(END, <span style="background-color: #fff0f0">&quot;ORDER BATCH DELETED:&quot;</span>, Order_num)
+
+    Order_num <span style="color: #333333">=</span> Order_num <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">1</span>
+
+    <span style="color: #008800; font-weight: bold">del</span> Rose_list [Order_num]
+    <span style="color: #008800; font-weight: bold">del</span> Tulip_list [Order_num]
+    <span style="color: #008800; font-weight: bold">del</span> Jasmine_list [Order_num]
+    <span style="color: #008800; font-weight: bold">del</span> Green_list [Order_num]
+    <span style="color: #008800; font-weight: bold">del</span> Vase_list [Order_num]
+
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">PlaceOrder</span>():
+    <span style="color: #008800; font-weight: bold">global</span> Rose_num
+    <span style="color: #008800; font-weight: bold">global</span> Tulip_num
+    <span style="color: #008800; font-weight: bold">global</span> Jasmine_num
+    <span style="color: #008800; font-weight: bold">global</span> Green_num
+    <span style="color: #008800; font-weight: bold">global</span> Vase_num 
+    <span style="color: #008800; font-weight: bold">global</span> Sale_num
+    <span style="color: #008800; font-weight: bold">global</span> Expense_num
+    <span style="color: #008800; font-weight: bold">global</span> Order_num
+    <span style="color: #008800; font-weight: bold">global</span> Track_count
+
+    rose2 <span style="color: #333333">=</span> <span style="color: #007020">sum</span>(Rose_list)
+    tulip2 <span style="color: #333333">=</span> <span style="color: #007020">sum</span>(Tulip_list)
+    jasmine2 <span style="color: #333333">=</span> <span style="color: #007020">sum</span>(Jasmine_list)
+    green2 <span style="color: #333333">=</span> <span style="color: #007020">sum</span>(Green_list)
+    vase2 <span style="color: #333333">=</span> <span style="color: #007020">sum</span>(Vase_list)
+
+    Rose_track<span style="color: #333333">.</span>append(rose2)
+    Tulip_track<span style="color: #333333">.</span>append(tulip2)
+    Jasmine_track<span style="color: #333333">.</span>append(jasmine2)
+    Green_track<span style="color: #333333">.</span>append(green2)
+    Vase_track<span style="color: #333333">.</span>append(vase2)
+
+    Track_count <span style="color: #333333">=</span> Track_count <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>
+
+    <span style="color: #008800; font-weight: bold">if</span> Track_count <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">1</span>: 
+
+        rose3 <span style="color: #333333">=</span> Rose_track[Track_count<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>] <span style="color: #333333">-</span> Rose_track[Track_count<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">2</span>]
+        tulip3 <span style="color: #333333">=</span> Tulip_track[Track_count<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>] <span style="color: #333333">-</span> Tulip_track[Track_count<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">2</span>]
+        jasmine3 <span style="color: #333333">=</span> Jasmine_track[Track_count<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>] <span style="color: #333333">-</span> Jasmine_track[Track_count<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">2</span>]
+        green3 <span style="color: #333333">=</span> Green_track[Track_count<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>] <span style="color: #333333">-</span> Green_track[Track_count<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">2</span>]
+        vase3 <span style="color: #333333">=</span> Vase_track[Track_count<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>] <span style="color: #333333">-</span> Vase_track[Track_count<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">2</span>]
+
+    <span style="color: #008800; font-weight: bold">else</span>:
+
+        rose3 <span style="color: #333333">=</span> rose2
+        tulip3 <span style="color: #333333">=</span> tulip2
+        jasmine3 <span style="color: #333333">=</span> jasmine2
+        green3 <span style="color: #333333">=</span> green2
+        vase3 <span style="color: #333333">=</span> vase2
+
+    Calc_Rose <span style="color: #333333">=</span> Rose_num
+    Calc_Tulip <span style="color: #333333">=</span> Tulip_num
+    Calc_Jasmine <span style="color: #333333">=</span> Jasmine_num
+    Calc_Green <span style="color: #333333">=</span> Green_num
+    Calc_Vase <span style="color: #333333">=</span> Vase_num
+
+    Rose_num <span style="color: #333333">=</span> (Calc_Rose <span style="color: #333333">-</span> rose3)
+    Tulip_num <span style="color: #333333">=</span> (Calc_Tulip <span style="color: #333333">-</span> tulip3)
+    Jasmine_num <span style="color: #333333">=</span> (Calc_Jasmine <span style="color: #333333">-</span> jasmine3)
+    Green_num <span style="color: #333333">=</span> (Calc_Green <span style="color: #333333">-</span> green3)
+
+    <span style="color: #008800; font-weight: bold">if</span> Rose_num <span style="color: #333333">&gt;=</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #000000; font-weight: bold">and</span> Tulip_num <span style="color: #333333">&gt;=</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #000000; font-weight: bold">and</span> Jasmine_num <span style="color: #333333">&gt;=</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #000000; font-weight: bold">and</span> Green_num <span style="color: #333333">&gt;=</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+       
+        <span style="color: #008800; font-weight: bold">while</span> <span style="color: #008800; font-weight: bold">True</span>:
+
+            <span style="color: #008800; font-weight: bold">try</span>:
+
+                <span style="color: #008800; font-weight: bold">if</span> rose3 <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #000000; font-weight: bold">and</span> tulip3 <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #000000; font-weight: bold">and</span> jasmine3 <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #000000; font-weight: bold">and</span> green3 <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #000000; font-weight: bold">and</span> vase3 <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+                    Order<span style="color: #333333">.</span>insert(END, <span style="background-color: #fff0f0">&quot;NO CHANGES DETECTED&quot;</span>, <span style="background-color: #fff0f0">&quot;ORDER NOT PROCESSED&quot;</span>, <span style="background-color: #fff0f0">&quot;LATEST BATCH NUM:&quot;</span>, Order_num)
+                    <span style="color: #008800; font-weight: bold">break</span>
+
+                <span style="color: #008800; font-weight: bold">else</span>: 
+                    Vase_num <span style="color: #333333">=</span> Calc_Vase <span style="color: #333333">-</span> vase3
+                    Sale_num <span style="color: #333333">=</span> Sale_num <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">30</span>
+                    Order<span style="color: #333333">.</span>insert(END, <span style="background-color: #fff0f0">&quot;ORDER BATCH(ES) PROCESSED&quot;</span>, <span style="background-color: #fff0f0">&quot;LATEST BATCH NUM:&quot;</span>, Order_num)
+
+                    rose_output<span style="color: #333333">.</span>config(text<span style="color: #333333">=</span>Rose_num)
+                    tulip_output<span style="color: #333333">.</span>config(text<span style="color: #333333">=</span>Tulip_num)
+                    jasmine_output<span style="color: #333333">.</span>config(text<span style="color: #333333">=</span>Jasmine_num)
+                    green_output<span style="color: #333333">.</span>config(text<span style="color: #333333">=</span>Green_num)
+                    vase_output<span style="color: #333333">.</span>config(text<span style="color: #333333">=</span>Vase_num)
+                    sales_output<span style="color: #333333">.</span>config(text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&#39;${:,.2f}&#39;</span><span style="color: #333333">.</span>format(Sale_num))
+
+                    sale1 <span style="color: #333333">=</span> Sale_num
+                    expense1 <span style="color: #333333">=</span> Expense_num
+
+                    profit1 <span style="color: #333333">=</span> sale1 <span style="color: #333333">-</span> expense1
+
+                    profit_output<span style="color: #333333">.</span>config(text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&#39;${:,.2f}&#39;</span><span style="color: #333333">.</span>format(profit1))
+                    <span style="color: #008800; font-weight: bold">break</span>
+            <span style="color: #008800; font-weight: bold">except</span>: 
+                Order<span style="color: #333333">.</span>insert(END, <span style="background-color: #fff0f0">&quot;SEVERE ERROR DETECTED&quot;</span>, <span style="background-color: #fff0f0">&quot;ORDER NOT PROCESSED&quot;</span>, <span style="background-color: #fff0f0">&quot;LATEST BATCH NUM:&quot;</span>, Order_num)
+
+
+    <span style="color: #008800; font-weight: bold">else</span>: 
+         Order<span style="color: #333333">.</span>insert(END, <span style="background-color: #fff0f0">&quot;ORDER BATCH(ES) NOT PROCESSED&quot;</span>, <span style="background-color: #fff0f0">&quot;ADD INENTORY OR CANCEL ORDER&quot;</span>, <span style="background-color: #fff0f0">&quot;LATEST BATCH NUM:&quot;</span>, Order_num)
+         Rose_num <span style="color: #333333">=</span> Calc_Rose
+         Tulip_num <span style="color: #333333">=</span> Calc_Tulip 
+         Jasmine_num <span style="color: #333333">=</span> Calc_Jasmine 
+         Green_num <span style="color: #333333">=</span> Calc_Green
+         Vase_num <span style="color: #333333">=</span> Calc_Vase
+
+
+<span style="color: #888888">#BEGIN First Column </span>
+Label(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;INVENTORY&quot;</span>, font<span style="color: #333333">=</span>(<span style="background-color: #fff0f0">&quot;Arial&quot;</span>, <span style="color: #0000DD; font-weight: bold">16</span>))<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, sticky<span style="color: #333333">=</span>W) 
+
+Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Roses:&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, sticky<span style="color: #333333">=</span>W)   
+rose_output <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;0&quot;</span>)
+rose_output<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>, sticky<span style="color: #333333">=</span>W) 
+
+Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Tulips:&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">2</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, sticky<span style="color: #333333">=</span>W)   
+tulip_output <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;0&quot;</span>)
+tulip_output<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">2</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>, sticky<span style="color: #333333">=</span>W) 
+
+Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Jasmine:&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">3</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, sticky<span style="color: #333333">=</span>W)   
+jasmine_output <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;0&quot;</span>)
+jasmine_output<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">3</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>, sticky<span style="color: #333333">=</span>W) 
+
+Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Greenery:&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, sticky<span style="color: #333333">=</span>W)   
+green_output <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;0&quot;</span>)
+green_output<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>, sticky<span style="color: #333333">=</span>W) 
+
+Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Vases:&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">5</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, sticky<span style="color: #333333">=</span>W)   
+vase_output <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;0&quot;</span>)
+vase_output<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">5</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>, sticky<span style="color: #333333">=</span>W) 
+
+<span style="color: #888888">#END First Column </span>
+
+<span style="color: #888888">#EMPTY_SPACER</span>
+Label(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>, padx<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">25</span>) 
+
+<span style="color: #888888">#BEGIN Second Column</span>
+Label(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;ADD TO INVENTORY&quot;</span>, font<span style="color: #333333">=</span>(<span style="background-color: #fff0f0">&quot;Arial&quot;</span>, <span style="color: #0000DD; font-weight: bold">16</span>))<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">2</span>, sticky<span style="color: #333333">=</span>W) 
+
+add_rose <span style="color: #333333">=</span> IntVar()
+add_rose_button <span style="color: #333333">=</span> Checkbutton(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Add 100 Roses&quot;</span>, variable <span style="color: #333333">=</span>add_rose)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">2</span>, sticky<span style="color: #333333">=</span>W)
+
+add_tulip <span style="color: #333333">=</span> IntVar()
+add_tulip_button <span style="color: #333333">=</span> Checkbutton(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Add 100 Tulips&quot;</span>, variable <span style="color: #333333">=</span>add_tulip)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">2</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">2</span>, sticky<span style="color: #333333">=</span>W)
+
+add_jasmine <span style="color: #333333">=</span> IntVar()
+add_jasmine_button <span style="color: #333333">=</span> Checkbutton(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Add 100 Jamine&quot;</span>, variable <span style="color: #333333">=</span>add_jasmine)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">3</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">2</span>, sticky<span style="color: #333333">=</span>W)
+
+add_green <span style="color: #333333">=</span> IntVar()
+add_green_button <span style="color: #333333">=</span> Checkbutton(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Add 100 Greenery&quot;</span>, variable <span style="color: #333333">=</span>add_green)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">2</span>, sticky<span style="color: #333333">=</span>W)
+
+add_vase <span style="color: #333333">=</span> IntVar()
+add_vase_button <span style="color: #333333">=</span> Checkbutton(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Add 10 Vases&quot;</span>, variable <span style="color: #333333">=</span>add_vase)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">5</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">2</span>, sticky<span style="color: #333333">=</span>W)
+
+Button(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Add To Inventory&quot;</span>, command<span style="color: #333333">=</span>addInventory)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">6</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">2</span>, sticky<span style="color: #333333">=</span>W)  
+
+
+<span style="color: #888888">#END Second Column</span>
+
+<span style="color: #888888">#EMPTY_SPACER</span>
+Label(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">3</span>, padx<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">25</span>) 
+
+<span style="color: #888888">#BEGIN Third Column</span>
+Label(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;ORDER FORM&quot;</span>, font<span style="color: #333333">=</span>(<span style="background-color: #fff0f0">&quot;Arial&quot;</span>, <span style="color: #0000DD; font-weight: bold">16</span>))<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, sticky<span style="color: #333333">=</span>W)
+
+Label(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Roses Quantity:&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, sticky<span style="color: #333333">=</span>W)   
+rose_order <span style="color: #333333">=</span> Entry(root, width<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">10</span>)
+rose_order<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">5</span>, sticky<span style="color: #333333">=</span>W)
+rose_order<span style="color: #333333">.</span>insert(<span style="color: #0000DD; font-weight: bold">0</span>, <span style="background-color: #fff0f0">&quot;0&quot;</span>)
+
+Label(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Tulips Quantity:&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">2</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, sticky<span style="color: #333333">=</span>W)   
+tulip_order <span style="color: #333333">=</span> Entry(root, width<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">10</span>)
+tulip_order<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">2</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">5</span>, sticky<span style="color: #333333">=</span>W)
+tulip_order<span style="color: #333333">.</span>insert(<span style="color: #0000DD; font-weight: bold">0</span>, <span style="background-color: #fff0f0">&quot;0&quot;</span>)
+
+Label(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Jasmine Quantity:&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">3</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, sticky<span style="color: #333333">=</span>W)   
+jasmine_order <span style="color: #333333">=</span> Entry(root, width<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">10</span>)
+jasmine_order<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">3</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">5</span>, sticky<span style="color: #333333">=</span>W)
+jasmine_order<span style="color: #333333">.</span>insert(<span style="color: #0000DD; font-weight: bold">0</span>, <span style="background-color: #fff0f0">&quot;0&quot;</span>)
+
+Label(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Greenery Quantity:&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, sticky<span style="color: #333333">=</span>W)   
+greenery_order <span style="color: #333333">=</span> Entry(root, width<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">10</span>)
+greenery_order<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">5</span>, sticky<span style="color: #333333">=</span>W)
+greenery_order<span style="color: #333333">.</span>insert(<span style="color: #0000DD; font-weight: bold">0</span>, <span style="background-color: #fff0f0">&quot;0&quot;</span>)
+
+Button(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Add to Order&quot;</span>, command<span style="color: #333333">=</span>AddOrder)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">5</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">5</span>, sticky<span style="color: #333333">=</span>W)  
+
+<span style="color: #888888"># Setting up display of transaction controls</span>
+Label(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;LINE ITEMS:&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">7</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, sticky<span style="color: #333333">=</span>W)
+OrderFrame <span style="color: #333333">=</span> Frame(root)
+OrderFrame<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">8</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, columnspan <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">2</span>, sticky <span style="color: #333333">=</span> tk<span style="color: #333333">.</span>W<span style="color: #333333">+</span>tk<span style="color: #333333">.</span>E)
+scrollbar <span style="color: #333333">=</span> Scrollbar(OrderFrame)
+scrollbar<span style="color: #333333">.</span>pack(side<span style="color: #333333">=</span>RIGHT, fill<span style="color: #333333">=</span>Y)
+Order <span style="color: #333333">=</span> Listbox(OrderFrame, height<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">8</span>, width<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">45</span>, yscrollcommand<span style="color: #333333">=</span>scrollbar<span style="color: #333333">.</span>set)
+Order<span style="color: #333333">.</span>pack()
+scrollbar<span style="color: #333333">.</span>config(command<span style="color: #333333">=</span>Order<span style="color: #333333">.</span>yview)
+
+Button(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Place Order&quot;</span>, command<span style="color: #333333">=</span>PlaceOrder)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">10</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, sticky<span style="color: #333333">=</span>W) 
+
+Button(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Cancel Order&quot;</span>, command<span style="color: #333333">=</span>CancelOrder)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">10</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">5</span>, sticky<span style="color: #333333">=</span>W) 
+
+<span style="color: #888888">#END Third Column</span>
+
+<span style="color: #888888">#EMPTY_SPACER</span>
+Label(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">5</span>, padx<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">25</span>) 
+
+<span style="color: #888888">#EMPTY_SPACER</span>
+Label(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">6</span>, padx<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">10</span>)
+
+<span style="color: #888888">#BEGIN Forth Column</span>
+Label(root, text<span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;FINANCIAL DATA&quot;</span>, font<span style="color: #333333">=</span>(<span style="background-color: #fff0f0">&quot;Arial&quot;</span>, <span style="color: #0000DD; font-weight: bold">16</span>))<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">7</span>, sticky<span style="color: #333333">=</span>W) 
+
+Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Sales:&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">7</span>, sticky<span style="color: #333333">=</span>W)   
+sales_output <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;$0.00&quot;</span>)
+sales_output<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">8</span>, sticky<span style="color: #333333">=</span>W) 
+
+Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Expenses:&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">2</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">7</span>, sticky<span style="color: #333333">=</span>W)   
+expenses_output <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;$0.00&quot;</span>)
+expenses_output<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">2</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">8</span>, sticky<span style="color: #333333">=</span>W) 
+
+Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;Profit:&quot;</span>)<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">3</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">7</span>, sticky<span style="color: #333333">=</span>W)   
+profit_output <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;$0.00&quot;</span>)
+profit_output<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">3</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">8</span>, sticky<span style="color: #333333">=</span>W) 
+
+<span style="color: #888888">#END Forth Column</span>
+root<span style="color: #333333">.</span>mainloop()
+</div></pre>
