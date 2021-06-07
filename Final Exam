@@ -1,0 +1,192 @@
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">tkinter</span> <span style="color: #008800; font-weight: bold">as</span> <span style="color: #0e84b5; font-weight: bold">tk</span> 
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">sqlite3</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">pathlib</span>
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">tkinter</span> <span style="color: #008800; font-weight: bold">import</span> <span style="color: #333333">*</span>
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">tkinter</span> <span style="color: #008800; font-weight: bold">import</span> ttk <span style="color: #888888"># Additional library for additional functionality.</span>
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">tkinter</span> <span style="color: #008800; font-weight: bold">import</span> messagebox
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnOpenDatabase</span>():
+    <span style="color: #008800; font-weight: bold">global</span> dbFile, conn, command
+    <span style="color: #008800; font-weight: bold">try</span>:
+        <span style="color: #888888"># Provide the file location</span>
+        dbFile <span style="color: #333333">=</span> pathlib<span style="color: #333333">.</span>Path(<span style="background-color: #fff0f0">&quot;FinalExam-Music.sqlite3&quot;</span>)
+        <span style="color: #888888"># Test to make sure the file exists</span>
+        <span style="color: #008800; font-weight: bold">if</span> dbFile<span style="color: #333333">.</span>exists() <span style="color: #333333">==</span> <span style="color: #008800; font-weight: bold">False</span>:
+            messagebox<span style="color: #333333">.</span>showerror(<span style="background-color: #fff0f0">&quot;Database Error&quot;</span>, <span style="background-color: #fff0f0">&quot;The database was not found.&quot;</span>)
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;Database not found&quot;</span>)
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;*********************************************************************&quot;</span>)
+            quit() <span style="color: #888888"># close the program</span>
+        <span style="color: #008800; font-weight: bold">else</span>:
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;Database was found&quot;</span>)
+            conn <span style="color: #333333">=</span> sqlite3<span style="color: #333333">.</span>connect(dbFile)
+            command <span style="color: #333333">=</span> conn<span style="color: #333333">.</span>cursor()
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;Connection to database made&quot;</span>)
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;*********************************************************************&quot;</span>)
+    <span style="color: #008800; font-weight: bold">except</span> <span style="color: #FF0000; font-weight: bold">Exception</span> <span style="color: #008800; font-weight: bold">as</span> ex:
+        messagebox<span style="color: #333333">.</span>showerror(<span style="background-color: #fff0f0">&quot;Database Error&quot;</span>, <span style="background-color: #fff0f0">&quot;An error occurred while trying to open the database&quot;</span>)
+        <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;An error occurred in fnOpenDatabase:&quot;</span>, ex)
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnSubmit</span>():
+    <span style="color: #008800; font-weight: bold">global</span> LengthText, MusicText
+    
+    MusicText <span style="color: #333333">=</span> <span style="color: #007020">str</span>(addMusic<span style="color: #333333">.</span>get())
+    
+    <span style="color: #008800; font-weight: bold">try</span>:
+        LengthText <span style="color: #333333">=</span> <span style="color: #007020">float</span>(addLength<span style="color: #333333">.</span>get())
+
+        <span style="color: #008800; font-weight: bold">if</span> LengthText <span style="color: #333333">&lt;</span> <span style="color: #6600EE; font-weight: bold">0.0</span>:
+            messagebox<span style="color: #333333">.</span>showerror(<span style="background-color: #fff0f0">&quot;Error&quot;</span>,<span style="background-color: #fff0f0">&quot;Cannot enter length less than 0&quot;</span>) 
+
+        <span style="color: #008800; font-weight: bold">elif</span> LengthText <span style="color: #333333">&gt;=</span> <span style="color: #6600EE; font-weight: bold">0.0</span>:
+            sql <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;INSERT into Music (songName, songLength) VALUES (?,?);&quot;</span>
+            data_tuple <span style="color: #333333">=</span> (MusicText,LengthText)
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;fnAddInventoryData execute&quot;</span>, sql)
+            command<span style="color: #333333">.</span>execute(sql, data_tuple)
+            conn<span style="color: #333333">.</span>commit()
+            fnDisplayItemLines()
+
+        <span style="color: #008800; font-weight: bold">else</span>: 
+            messagebox<span style="color: #333333">.</span>showerror(<span style="background-color: #fff0f0">&quot;Error&quot;</span>,<span style="background-color: #fff0f0">&quot;Must be a number&quot;</span>)
+    <span style="color: #008800; font-weight: bold">except</span>:
+        messagebox<span style="color: #333333">.</span>showerror(<span style="background-color: #fff0f0">&quot;Error&quot;</span>,<span style="background-color: #fff0f0">&quot;List must be a number&quot;</span>)
+    fnAvgLength()
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnDisplayItemLines</span>():
+    <span style="color: #008800; font-weight: bold">global</span> AvgLength, SongNum, LengthText, MusicText
+
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;Item ran&quot;</span>)
+
+    SongName<span style="color: #333333">.</span>append(MusicText)
+    SongLength<span style="color: #333333">.</span>append(LengthText)
+
+    SongList <span style="color: #333333">=</span> <span style="color: #007020">str</span>(SongName[SongNum <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">1</span>])
+    LengthList <span style="color: #333333">=</span>SongLength[SongNum <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">1</span>]
+
+    SongNum <span style="color: #333333">=</span> SongNum <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>
+ 
+    eachSong <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Song: &quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(SongList) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot; || &quot;</span> <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;Length: &quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(LengthList),
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;eachSong:&quot;</span>, eachSong)
+ 
+    <span style="color: #888888"># Display each order in the listbox</span>
+    <span style="color: #008800; font-weight: bold">for</span> Songs <span style="color: #000000; font-weight: bold">in</span> (eachSong):
+        lineItems<span style="color: #333333">.</span>insert(END, Songs)
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnAvgLength</span>():
+    <span style="color: #008800; font-weight: bold">global</span> SongNum
+    AvgL <span style="color: #333333">=</span> <span style="color: #007020">sum</span>(SongLength)
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;sum: &quot;</span>, AvgL)
+    AvgN <span style="color: #333333">=</span> AvgL<span style="color: #333333">/</span>(SongNum)
+    LengthTexts<span style="color: #333333">.</span>config(text<span style="color: #333333">=</span>AvgN)
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnImportSongNum</span>():
+    <span style="color: #008800; font-weight: bold">global</span> SongNum
+    command<span style="color: #333333">.</span>execute(<span style="background-color: #fff0f0">&quot;SELECT id FROM Music WHERE id = (SELECT MAX(id) FROM Music);&quot;</span>)
+    record_songnum <span style="color: #333333">=</span> command<span style="color: #333333">.</span>fetchone()
+    SongNum <span style="color: #333333">=</span> record_songnum[<span style="color: #0000DD; font-weight: bold">0</span>]
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;SongNum: &quot;</span>, SongNum)
+    fnImportSongList()
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fnImportSongList</span>():
+    <span style="color: #008800; font-weight: bold">global</span> SongNum, count_song
+
+    count_song <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+
+    <span style="color: #008800; font-weight: bold">while</span> count_song <span style="color: #333333">&gt;=</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+
+        <span style="color: #888888">#Keeps looping until done</span>
+        count_song <span style="color: #333333">=</span> count_song <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>
+        <span style="color: #888888">###########################</span>
+        
+        <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;count song: &quot;</span>, count_song)
+
+        <span style="color: #008800; font-weight: bold">if</span> count_song <span style="color: #333333">&lt;=</span> SongNum:
+        
+            <span style="color: #008800; font-weight: bold">if</span> count_song <span style="color: #333333">&lt;</span> SongNum: 
+                sqlSong <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;SELECT songName FROM Music WHERE id =&quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(count_song) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;;&quot;</span>
+                sqlList <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;SELECT songLength FROM Music WHERE id =&quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(count_song) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;;&quot;</span>
+                command<span style="color: #333333">.</span>execute(sqlSong)
+                record_Song <span style="color: #333333">=</span> command<span style="color: #333333">.</span>fetchone()
+                Song_ret <span style="color: #333333">=</span> record_Song[<span style="color: #0000DD; font-weight: bold">0</span>]
+
+                command<span style="color: #333333">.</span>execute(sqlList)
+                record_List <span style="color: #333333">=</span> command<span style="color: #333333">.</span>fetchone()
+                List_ret <span style="color: #333333">=</span> record_List[<span style="color: #0000DD; font-weight: bold">0</span>]
+
+                SongName<span style="color: #333333">.</span>append(<span style="color: #007020">str</span>(Song_ret))
+                SongLength<span style="color: #333333">.</span>append(<span style="color: #007020">float</span>(List_ret))
+
+                eachSong <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Song: &quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(Song_ret) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot; || &quot;</span> <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;Length: &quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(List_ret),
+                <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;eachSong:&quot;</span>, eachSong)
+ 
+                <span style="color: #888888"># Display each order in the listbox</span>
+                <span style="color: #008800; font-weight: bold">for</span> Songs <span style="color: #000000; font-weight: bold">in</span> (eachSong):
+                    lineItems<span style="color: #333333">.</span>insert(END, Songs)
+
+            <span style="color: #008800; font-weight: bold">else</span>: 
+                sqlSong <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;SELECT songName FROM Music WHERE id =&quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(count_song) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;;&quot;</span>
+                sqlList <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;SELECT songLength FROM Music WHERE id =&quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(count_song) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;;&quot;</span>
+                command<span style="color: #333333">.</span>execute(sqlSong)
+                record_Song <span style="color: #333333">=</span> command<span style="color: #333333">.</span>fetchone()
+                Song_ret <span style="color: #333333">=</span> record_Song[<span style="color: #0000DD; font-weight: bold">0</span>]
+
+                command<span style="color: #333333">.</span>execute(sqlList)
+                record_List <span style="color: #333333">=</span> command<span style="color: #333333">.</span>fetchone()
+                List_ret <span style="color: #333333">=</span> record_List[<span style="color: #0000DD; font-weight: bold">0</span>]
+
+                SongName<span style="color: #333333">.</span>append(<span style="color: #007020">str</span>(Song_ret))
+                SongLength<span style="color: #333333">.</span>append(<span style="color: #007020">float</span>(List_ret))
+
+                eachSong <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Song: &quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(Song_ret) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot; || &quot;</span> <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;Length: &quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(List_ret),
+                <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;eachSong:&quot;</span>, eachSong)
+ 
+                <span style="color: #888888"># Display each order in the listbox with break inserted</span>
+                <span style="color: #008800; font-weight: bold">for</span> Songs <span style="color: #000000; font-weight: bold">in</span> (eachSong):
+                    lineItems<span style="color: #333333">.</span>insert(END, Songs) 
+                <span style="color: #008800; font-weight: bold">break</span>
+        <span style="color: #008800; font-weight: bold">else</span>:
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;List executed&quot;</span>)
+    fnAvgLength()
+
+<span style="color: #888888"># Setting up window</span>
+root<span style="color: #333333">=</span> Tk()
+root<span style="color: #333333">.</span>title(<span style="background-color: #fff0f0">&quot;Final Exam&quot;</span>)
+root<span style="color: #333333">.</span>geometry(<span style="background-color: #fff0f0">&quot;800x400&quot;</span>)
+
+SongName <span style="color: #333333">=</span> []
+SongLength <span style="color: #333333">=</span> []
+AvgLength <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+SongNum <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+Run_once_count <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Add Music: &quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, column <span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, sticky<span style="color: #333333">=</span>W)
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Song Name: &quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>, column <span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, sticky<span style="color: #333333">=</span>W)
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Length: &quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">2</span>, column <span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>, sticky<span style="color: #333333">=</span>W)
+Button(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Submit&quot;</span>, command <span style="color: #333333">=</span> fnSubmit)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, sticky <span style="color: #333333">=</span>W)
+
+addMusic <span style="color: #333333">=</span> Entry(root, width<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">15</span>) <span style="color: #888888"># Insert a input box</span>
+addMusic<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>, column <span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>, sticky <span style="color: #333333">=</span>W)
+addLength <span style="color: #333333">=</span> Entry(root, width<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">15</span>) <span style="color: #888888"># Insert a input box</span>
+addLength<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">2</span>, column <span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>, sticky <span style="color: #333333">=</span>W)
+
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot; &quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, column <span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">2</span>, sticky<span style="color: #333333">=</span>W)
+
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Music Library: &quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>, column <span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">3</span>, sticky<span style="color: #333333">=</span>W)
+lineItemsFrame <span style="color: #333333">=</span> Frame(root)
+lineItemsFrame<span style="color: #333333">.</span>grid(row<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>,rowspan<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>, column<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">3</span>, sticky<span style="color: #333333">=</span>W, columnspan <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">5</span>)
+scrollbar <span style="color: #333333">=</span> Scrollbar(lineItemsFrame)
+scrollbar<span style="color: #333333">.</span>pack(side<span style="color: #333333">=</span>RIGHT, fill<span style="color: #333333">=</span>Y)
+lineItems <span style="color: #333333">=</span> Listbox(lineItemsFrame, height<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">5</span>, width <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">40</span>, yscrollcommand<span style="color: #333333">=</span>scrollbar<span style="color: #333333">.</span>set)
+lineItems<span style="color: #333333">.</span>pack()
+scrollbar<span style="color: #333333">.</span>config(command<span style="color: #333333">=</span>lineItems<span style="color: #333333">.</span>yview)
+Label(root, text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;Length:&quot;</span>)<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">6</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, sticky <span style="color: #333333">=</span>W)
+LengthTexts <span style="color: #333333">=</span> Label(root, text <span style="color: #333333">=</span><span style="background-color: #fff0f0">&quot;0&quot;</span>)
+LengthTexts<span style="color: #333333">.</span>grid(row <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">6</span>, column <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">4</span>, sticky <span style="color: #333333">=</span> W)
+
+fnOpenDatabase()
+
+<span style="color: #008800; font-weight: bold">if</span> Run_once_count <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">1</span>:
+    fnImportSongNum()
+    Run_once_count <span style="color: #333333">=</span> Run_once_count <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>
+
+root<span style="color: #333333">.</span>mainloop()
+</pre></div>
