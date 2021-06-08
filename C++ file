@@ -1,0 +1,180 @@
+<style>
+#overflowCode {
+  width: auto;
+  height: 50VH;
+  overflow: scroll;
+  background: #ffffff; 
+  border:solid gray;
+  border-width:.1em .1em .1em .8em; 
+  padding:.2em .6em;
+}
+</style>
+
+<pre style="margin: 0; line-height: 125%"><div id="overflowCode">
+<span style="color: #888888">/********************************************/</span>
+<span style="color: #888888">// Title: TIC TAC TOE CODE                  //</span>
+<span style="color: #888888">// Name: Brendan Busch                      //</span>
+<span style="color: #888888">// Date: 10/12/16                           //</span>
+<span style="color: #888888">// Instructor: Professor Chon               //</span>
+<span style="color: #888888">/********************************************/</span>
+
+<span style="color: #557799">#include &lt;iostream&gt;</span>
+<span style="color: #557799">#include &lt;iomanip&gt;</span>
+<span style="color: #557799">#include &lt;cmath&gt;</span>
+<span style="color: #557799">#include &lt;string&gt;</span>
+<span style="color: #557799">#include &lt;ctime&gt;</span>
+<span style="color: #557799">#include &quot;Board.h&quot;  </span><span style="color: #888888">// Function Call</span>
+<span style="color: #557799">#include &quot;Input.h&quot;</span>
+<span style="color: #557799">#include &quot;Space.h&quot;</span>
+<span style="color: #557799">#include &quot;Game.h&quot;</span>
+
+<span style="color: #008800; font-weight: bold">using</span> <span style="color: #008800; font-weight: bold">namespace</span> std;
+
+<span style="color: #333399; font-weight: bold">int</span> <span style="color: #0066BB; font-weight: bold">main</span>(<span style="color: #333399; font-weight: bold">void</span>)
+{
+	<span style="color: #333399; font-weight: bold">int</span> i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>, ii <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">2</span>, iii <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>, iv <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">4</span>, v <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">5</span>, vi <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">6</span>, vii <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">7</span>, viii <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">8</span>, ix <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">9</span>; <span style="color: #888888">// Intitial Number to draw board</span>
+	<span style="color: #333399; font-weight: bold">int</span> user_input;
+	<span style="color: #333399; font-weight: bold">int</span> result <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>; <span style="color: #888888">// IF RESULT = 0, then main loop continues</span>
+
+	<span style="color: #888888">/*************************/</span>
+	<span style="color: #888888">//        IMPORTANT!     //</span>
+	<span style="color: #888888">//                       //</span>
+	<span style="color: #888888">//   This program see:   //</span>
+	<span style="color: #888888">//    10 as &#39;O&#39;          //</span>
+	<span style="color: #888888">//    11 as &#39;X&#39;          //</span>
+	<span style="color: #888888">/*************************/</span>
+
+	cout <span style="color: #333333">&lt;&lt;</span> <span style="background-color: #fff0f0">&quot;  %%%%%%%%%%  &amp;&amp;   @@@@@@@    @@@@@@@@                                      </span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>;
+	cout <span style="color: #333333">&lt;&lt;</span> <span style="background-color: #fff0f0">&quot;      %%      &amp;&amp;   @@            @@      @@@@@   @@@@@@     @@               </span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>;
+	cout <span style="color: #333333">&lt;&lt;</span> <span style="background-color: #fff0f0">&quot;      %%      &amp;&amp;   @@            @@     @    @   @          @@           @@@@@</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>;
+	cout <span style="color: #333333">&lt;&lt;</span> <span style="background-color: #fff0f0">&quot;      %%      &amp;&amp;   @@            @@    @     @   @        @@@@@@   @@@@  @    @</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>;
+	cout <span style="color: #333333">&lt;&lt;</span> <span style="background-color: #fff0f0">&quot;      %%      &amp;&amp;   @@            @@    @     @   @          @@     @  @  @@@@@@       </span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>;
+	cout <span style="color: #333333">&lt;&lt;</span> <span style="background-color: #fff0f0">&quot;      &amp;&amp;      &amp;&amp;   @@            @@     @    @   @          @@     @  @  @      </span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>;
+	cout <span style="color: #333333">&lt;&lt;</span> <span style="background-color: #fff0f0">&quot;      &amp;&amp;      &amp;&amp;   @@@@@@@       @@     @@@@@@@  @@@@@      @@     @@@@  @@@@@@     </span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>;
+
+	cout <span style="color: #333333">&lt;&lt;</span> <span style="background-color: #fff0f0">&quot;</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n\t</span><span style="background-color: #fff0f0"> Press any button to start the game</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n\n</span><span style="background-color: #fff0f0">&quot;</span>;
+
+	system(<span style="background-color: #fff0f0">&quot;pause&quot;</span>);
+	system(<span style="background-color: #fff0f0">&quot;cls&quot;</span>);
+
+	<span style="color: #008800; font-weight: bold">while</span> (result <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span>){
+		cout <span style="color: #333333">&lt;&lt;</span> <span style="background-color: #fff0f0">&quot;  </span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n\n</span><span style="background-color: #fff0f0">USER - (X)  &amp;&amp;  AI - (O) </span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n\n\n</span><span style="background-color: #fff0f0">&quot;</span>;
+
+		board(i, ii, iii, iv, v, vi, vii, viii, ix); <span style="color: #888888">// Board shown</span>
+
+		result <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>; <span style="color: #888888">// To mark result = 0</span>
+
+		cout <span style="color: #333333">&lt;&lt;</span> <span style="background-color: #fff0f0">&quot;Enter your position  ( 1 -- 9): </span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>; cin <span style="color: #333333">&gt;&gt;</span> user_input;
+		game(<span style="color: #333333">&amp;</span>result, i, ii, iii, iv, v, vi, vii, viii, ix); <span style="color: #888888">// Calculates result from User&#39;s input</span>
+		<span style="color: #008800; font-weight: bold">if</span> (result <span style="color: #333333">!=</span> <span style="color: #0000DD; font-weight: bold">0</span>){
+			
+			<span style="color: #008800; font-weight: bold">break</span>; <span style="color: #888888">//Skips if result not = 0</span>
+		}
+		space(result, i, ii, iii, iv, v, vi, vii, viii, ix);
+
+		user_input <span style="color: #333333">=</span> input(result, user_input, i, ii, iii, iv, v, vi, vii, viii, ix);
+
+		<span style="color: #888888">// VERY DUMB AI, even a caveman can beat AI below</span>
+		
+		<span style="color: #008800; font-weight: bold">if</span> (i <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">11</span>)
+		{
+			ix <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+		}
+		<span style="color: #008800; font-weight: bold">if</span> (ii <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">11</span>)
+		{
+			viii <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+		}
+		<span style="color: #008800; font-weight: bold">if</span> (iii <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">11</span>)
+		{
+			vii <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+		}
+		<span style="color: #008800; font-weight: bold">if</span> (iv <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">11</span>)
+		{
+			vi <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+		}
+		<span style="color: #008800; font-weight: bold">if</span> (v <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">11</span>)
+		{
+			<span style="color: #333399; font-weight: bold">int</span> y;
+			srand(time(<span style="color: #007020">NULL</span>));
+			y <span style="color: #333333">=</span> (rand() <span style="color: #333333">%</span> <span style="color: #0000DD; font-weight: bold">9</span>) <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>; <span style="color: #888888">// RANDOM NUMBER if 5 entered</span>
+
+			<span style="color: #008800; font-weight: bold">if</span> (y <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>)
+			{
+				i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+			}
+			<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (y <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">2</span>)
+			{
+				ii <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+			}
+			<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (y <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">3</span>)
+			{
+				iii <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+			}
+			<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (y <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">4</span>)
+			{
+				iv <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+			}
+			<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (y <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">5</span>)
+			{
+				iii <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+			}
+			<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (y <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">6</span>)
+			{
+				vi <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+			}
+			<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (y <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">7</span>)
+			{
+				vii <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+			}
+			<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (y <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">8</span>)
+			{
+				viii <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+			}
+			<span style="color: #008800; font-weight: bold">else</span>
+			{
+				ix <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+			}
+		}
+		<span style="color: #008800; font-weight: bold">if</span> (vi <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">11</span>)
+		{
+			iv <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+		}
+		<span style="color: #008800; font-weight: bold">if</span> (vii <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">11</span>)
+		{
+			iii <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+		}
+		<span style="color: #008800; font-weight: bold">if</span> (viii <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">11</span>)
+		{
+			ii <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+		}
+		<span style="color: #008800; font-weight: bold">if</span> (ix <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">11</span>)
+		{
+			i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>;
+		}
+		<span style="color: #888888">// END AI</span>
+
+		game(<span style="color: #333333">&amp;</span>result, i, ii, iii, iv, v, vi, vii, viii, ix); <span style="color: #888888">// Check to see if there&#39;s a winner</span>
+
+		system(<span style="background-color: #fff0f0">&quot;cls&quot;</span>);
+	}
+	cout <span style="color: #333333">&lt;&lt;</span> endl <span style="color: #333333">&lt;&lt;</span> endl;
+	board(i, ii, iii, iv, v, vi, vii, viii, ix);
+
+	<span style="color: #008800; font-weight: bold">if</span> (result <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">2</span>) {
+		cout <span style="color: #333333">&lt;&lt;</span> <span style="background-color: #fff0f0">&quot; </span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0"> Congrats, easy huh? </span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n\n</span><span style="background-color: #fff0f0">&quot;</span>; <span style="color: #888888">// if result is 2, user wins</span>
+
+	}
+	<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (result <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>) {
+		cout <span style="color: #333333">&lt;&lt;</span> <span style="background-color: #fff0f0">&quot;</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0"> Computer wins, you suck</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n\n</span><span style="background-color: #fff0f0">&quot;</span>; <span style="color: #888888">// AI wins</span>
+	}
+	<span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (result <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">3</span>)
+	{
+		cout <span style="color: #333333">&lt;&lt;</span> <span style="background-color: #fff0f0">&quot; </span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0"> </span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0"> DRAW!!!!</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n\n</span><span style="background-color: #fff0f0">&quot;</span>;
+		result <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>;
+	}
+
+
+	system(<span style="background-color: #fff0f0">&quot;pause&quot;</span>);
+	<span style="color: #008800; font-weight: bold">return</span> (<span style="color: #0000DD; font-weight: bold">0</span>);
+}
+</div></pre>
