@@ -1,4 +1,17 @@
-<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">tkinter</span> <span style="color: #008800; font-weight: bold">as</span> <span style="color: #0e84b5; font-weight: bold">tk</span> 
+<style>
+#overflowCode {
+  width: auto;
+  height: 50VH;
+  overflow: scroll;
+  background: #f2f3f4; 
+  border:solid gray;
+  border-width:.1em .1em .1em .8em; 
+  padding:.2em .6em;
+}
+</style>
+
+<pre style="margin: 0; line-height: 125%"><div id="overflowCode">
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">tkinter</span> <span style="color: #008800; font-weight: bold">as</span> <span style="color: #0e84b5; font-weight: bold">tk</span> 
 <span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">sqlite3</span>
 <span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">pathlib</span>
 <span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">tkinter</span> <span style="color: #008800; font-weight: bold">import</span> <span style="color: #333333">*</span>
@@ -189,4 +202,4 @@ fnOpenDatabase()
     Run_once_count <span style="color: #333333">=</span> Run_once_count <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>
 
 root<span style="color: #333333">.</span>mainloop()
-</pre></div>
+</div></pre>
