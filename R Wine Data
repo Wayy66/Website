@@ -1,0 +1,368 @@
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888">###############################################################################</span>
+<span style="color: #888888">#------------------------------------------------------------------------------</span>
+<span style="color: #888888"># Busch R Wine project</span>
+<span style="color: #888888">#</span>
+<span style="color: #888888"># Comment - The scope of this project keeps evolving so it&#39;s not exactly in order</span>
+<span style="color: #888888">#</span>
+<span style="color: #888888">#------------------------------------------------------------------------------</span>
+
+<span style="color: #888888">rm(list=ls())</span>
+
+<span style="color: #888888">#Import red wine csv </span>
+
+<span style="color: #888888">wineRAW &lt;- read.csv(&quot;winequality-red.csv&quot;,header=T)</span>
+
+<span style="color: #888888">wine &lt;- na.omit(wineRAW) # to see if any row is deleted for having na value, turns out there&#39;s none</span>
+
+<span style="color: #888888">summary(wine$alcohol)</span>
+<span style="color: #888888"># Result</span>
+<span style="color: #888888">#------------------------------------------------------------------------------</span>
+<span style="color: #888888"># &gt; summary(wine$alcohol)</span>
+<span style="color: #888888"># Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span>
+<span style="color: #888888"># 8.40    9.50   10.20   10.42   11.10   14.90</span>
+<span style="color: #888888">#------------------------------------------------------------------------------</span>
+
+<span style="color: #888888">#To create a category, we used the outcome of summary to divide it into 4 category</span>
+
+<span style="color: #888888">#generating a category variable</span>
+<span style="color: #888888">wine$alcohol_strength &lt;- ifelse(wine$alcohol &lt;= 9.50, &#39;weak&#39;,</span>
+<span style="color: #888888">                        ifelse(wine$alcohol &lt;= 10.20, &#39;below average&#39;,</span>
+<span style="color: #888888">                               ifelse(wine$alcohol &lt;= 11.10, &#39;above average&#39;, &#39;strong&#39;)))</span>
+
+<span style="color: #888888">summary(wine$quality)</span>
+
+<span style="color: #888888">#------------------------------------------------------------------------------</span>
+<span style="color: #888888"># &gt; summary(wine$quality)</span>
+<span style="color: #888888"># Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span>
+<span style="color: #888888"># 3.000   5.000   6.000   5.636   6.000   8.000 </span>
+<span style="color: #888888">#------------------------------------------------------------------------------</span>
+
+<span style="color: #888888">#generating a category variable</span>
+<span style="color: #888888">wine$rate &lt;- ifelse(wine$quality &lt;= 3, &#39;three&#39;,</span>
+<span style="color: #888888">                ifelse(wine$quality &lt;= 4, &#39;four&#39;,</span>
+<span style="color: #888888">                    ifelse(wine$quality &lt;= 5, &#39;five&#39;,</span>
+<span style="color: #888888">                      ifelse(wine$quality &lt;= 6, &#39;six&#39;,</span>
+<span style="color: #888888">                          ifelse(wine$quality &lt;= 7, &#39;seven&#39;,&#39;eight&#39;)))))</span>
+
+<span style="color: #888888">#to order the categorical label</span>
+<span style="color: #888888">wine$alcohol_strength &lt;- factor(wine$alcohol_strength , </span>
+<span style="color: #888888">                                levels=c(&quot;weak&quot;, &quot;below average&quot;, &quot;above average&quot;, &quot;strong&quot;))</span>
+
+<span style="color: #888888">#to order the categorical label</span>
+<span style="color: #888888">wine$rate &lt;- factor(wine$rate , levels=c(&quot;three&quot;, &quot;four&quot;, &quot;five&quot;, &quot;six&quot;, &quot;seven&quot;, &quot;eight&quot;))</span>
+
+<span style="color: #888888">lapply(wine, class) # to verify 2 categorical classes</span>
+
+<span style="color: #888888">drops &lt;- c(&quot;quality&quot;)</span>
+
+<span style="color: #888888">wine &lt;- wine[ , !(names(wine) %in% drops )] #To drop a numeric variables</span>
+
+<span style="color: #888888">summary(wine)</span>
+
+<span style="color: #888888">#To figure out where the volatile acidity are at </span>
+<span style="color: #888888">boxplot(volatile.acidity~rate,data=wine, main=&quot;Volatile Acidity by wine quality rating&quot;,</span>
+<span style="color: #888888">        xlab=&quot;Quality rating&quot;, ylab=&quot;Volatile Acidty&quot;)</span>
+
+<span style="color: #888888">boxplot(sulphates~rate,data=wine, main=&quot;Sulphates by wine quality rating&quot;,</span>
+<span style="color: #888888">        xlab=&quot;Quality rating&quot;, ylab=&quot;Sulphates level&quot;)</span>
+
+
+<span style="color: #888888">cor(wineRAW, use=&quot;complete.obs&quot;)</span>
+
+<span style="color: #888888">#comment: quality and alcohol - 0.476, quality and sulphates - 0.25139, quality and volatile acidity -0.39055</span>
+
+<span style="color: #888888">install.packages(&quot;ggpubr&quot;)</span>
+<span style="color: #888888">library(ggpubr)</span>
+
+
+<span style="color: #888888">ggscatter(wineRAW, x = &quot;quality&quot;, y = &quot;sulphates&quot;,</span>
+<span style="color: #888888">          add = &quot;reg.line&quot;,</span>
+<span style="color: #888888">          cor.coef = TRUE, cor.method = &quot;pearson&quot;, xlab = &quot;Quality Rating&quot;,</span>
+<span style="color: #888888">          ylab = &quot;Sulphates&quot;, title = &quot;Sulphates amount by Quality level&quot;, size = 1, color =&quot;blue&quot;)</span>
+
+<span style="color: #888888">ggscatter(wineRAW, x = &quot;quality&quot;, y = &quot;alcohol&quot;,</span>
+<span style="color: #888888">          add = &quot;reg.line&quot;,</span>
+<span style="color: #888888">          cor.coef = TRUE, cor.method = &quot;pearson&quot;, xlab = &quot;Quality Rating&quot;,</span>
+<span style="color: #888888">          ylab = &quot;Alcohol Percentage&quot;, title = &quot;Alcohol Percentage amount by Quality level&quot;, size = 1, color =&quot;red&quot;)</span>
+
+<span style="color: #888888">ggscatter(wineRAW, x = &quot;quality&quot;, y = &quot;volatile.acidity&quot;,</span>
+<span style="color: #888888">          add = &quot;reg.line&quot;,</span>
+<span style="color: #888888">          cor.coef = TRUE, cor.method = &quot;pearson&quot;, xlab = &quot;Quality Rating&quot;,</span>
+<span style="color: #888888">          ylab = &quot;Volatile Acidity level&quot;, title = &quot;Volative Acidity level by Quality level&quot;, size = 1, color =&quot;green&quot;)</span>
+
+<span style="color: #888888">hist(wine$pH, breaks = 30, xlab = &quot;pH level&quot;,  freq = F, main =  &quot;Histogram of destiny by pH level&quot;)</span>
+<span style="color: #888888">lines(density(wine$pH),</span>
+<span style="color: #888888">      lwd = 2,</span>
+<span style="color: #888888">      col = &quot;red&quot;)</span>
+
+<span style="color: #888888">hist(wine$sulphates, breaks = 30, xlab = &quot;Sulphates level&quot;,</span>
+<span style="color: #888888">     freq = F, main =  &quot;Histogram of destiny by Sulphates level&quot;)</span>
+<span style="color: #888888">lines(density(wine$sulphates),</span>
+<span style="color: #888888">      lwd = 2,</span>
+<span style="color: #888888">      col = &quot;red&quot;)</span>
+
+<span style="color: #888888">hist(wine$volatile.acidity, breaks = 30, xlab = &quot;Volatile Acidity level&quot;,</span>
+<span style="color: #888888">     freq = F, main =  &quot;Histogram of destiny by Volative Acidity level&quot;)</span>
+<span style="color: #888888">lines(density(wine$volatile.acidity),</span>
+<span style="color: #888888">      lwd = 2,</span>
+<span style="color: #888888">      col = &quot;red&quot;)</span>
+
+<span style="color: #888888"># Percent Stacked Barplot for alcohol strength in each category</span>
+
+
+<span style="color: #888888">ggplot(wine,  aes(fill=alcohol_strength, y=alcohol, x=rate)) + </span>
+<span style="color: #888888">  geom_bar(position=&quot;fill&quot;, stat=&quot;identity&quot;) + </span>
+<span style="color: #888888">    ggtitle(&quot;Alcohol Strength by Rating Percent Stacked Barplot&quot;) +</span>
+<span style="color: #888888">      xlab(&quot;Wine rating&quot;) +</span>
+<span style="color: #888888">        ylab (&quot;Alcohol Percentage&quot;) +</span>
+<span style="color: #888888">          labs(colour = &quot;Alcohol Strength&quot;)</span>
+
+<span style="color: #888888">#Custom graph</span>
+
+<span style="color: #888888">ggplot(wineRAW, aes(x=sulphates, y=quality)) +</span>
+<span style="color: #888888">  stat_summary (fun = &quot;mean&quot;) + </span>
+<span style="color: #888888">    geom_vline(xintercept = 0.7, color=&quot;red&quot;)+ </span>
+<span style="color: #888888">     geom_vline(xintercept = 0.95, color=&quot;red&quot;)+</span>
+<span style="color: #888888">       geom_smooth()+</span>
+<span style="color: #888888">         ggtitle(&quot;Average red wine Quality by Sulphate level&quot;)</span>
+
+<span style="color: #888888">#----------------- END RED WINE --------------------------------------</span>
+
+
+<span style="color: #888888">#----------------- BEGIN WHITE WINE ----------------------------------</span>
+
+<span style="color: #888888">WhiteWineRAW &lt;- read.csv(&quot;winequality-white.csv&quot;,header=T)</span>
+
+<span style="color: #888888">WhiteWine &lt;- na.omit(WhiteWineRAW)</span>
+
+<span style="color: #888888">summary(WhiteWine$alcohol)</span>
+<span style="color: #888888"># Result</span>
+<span style="color: #888888">#------------------------------------------------------------------------------</span>
+<span style="color: #888888"># &gt; summary(WhiteWine$alcohol)</span>
+<span style="color: #888888"># Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span>
+<span style="color: #888888"># 8.00    9.50   10.40   10.51   11.40   14.20 </span>
+<span style="color: #888888">#------------------------------------------------------------------------------</span>
+
+<span style="color: #888888">#generating a category variable</span>
+<span style="color: #888888">WhiteWine$alcohol_strength &lt;- ifelse(WhiteWine$alcohol &lt;= 9.50, &#39;weak&#39;,</span>
+<span style="color: #888888">                                ifelse(WhiteWine$alcohol &lt;= 10.40, &#39;below average&#39;,</span>
+<span style="color: #888888">                                       ifelse(WhiteWine$alcohol &lt;= 11.40, &#39;above average&#39;, &#39;strong&#39;)))</span>
+
+
+<span style="color: #888888">#generating a category variable</span>
+<span style="color: #888888">WhiteWine$rate &lt;- ifelse(WhiteWine$quality &lt;= 3, &#39;three&#39;,</span>
+<span style="color: #888888">                    ifelse(WhiteWine$quality &lt;= 4, &#39;four&#39;,</span>
+<span style="color: #888888">                           ifelse(WhiteWine$quality &lt;= 5, &#39;five&#39;,</span>
+<span style="color: #888888">                                  ifelse(WhiteWine$quality &lt;= 6, &#39;six&#39;,</span>
+<span style="color: #888888">                                         ifelse(WhiteWine$quality &lt;= 7, &#39;seven&#39;,</span>
+<span style="color: #888888">                                                ifelse(WhiteWine$quality &lt;= 8, &#39;eight&#39;,&#39;nine&#39;))))))</span>
+
+<span style="color: #888888">#to order the categorical label</span>
+<span style="color: #888888">WhiteWine$alcohol_strength &lt;- factor(WhiteWine$alcohol_strength , </span>
+<span style="color: #888888">                                levels=c(&quot;weak&quot;, &quot;below average&quot;, &quot;above average&quot;, &quot;strong&quot;))</span>
+
+<span style="color: #888888">#to order the categorical label</span>
+<span style="color: #888888">WhiteWine$rate &lt;- factor(WhiteWine$rate , levels=c(&quot;three&quot;, &quot;four&quot;, &quot;five&quot;, &quot;six&quot;, &quot;seven&quot;, &quot;eight&quot;, &quot;nine&quot;))</span>
+
+<span style="color: #888888">lapply(WhiteWine, class) # to verify 2 categorical classes</span>
+
+<span style="color: #888888">drops &lt;- c(&quot;quality&quot;)</span>
+
+<span style="color: #888888">WhiteWine &lt;- WhiteWine[ , !(names(WhiteWine) %in% drops )] #To drop a numeric variables</span>
+
+<span style="color: #888888">summary(WhiteWine)</span>
+
+<span style="color: #888888">cor_white_table &lt;- cor(WhiteWineRAW, use=&quot;complete.obs&quot;)</span>
+
+<span style="color: #888888">write.csv(cor_white_table,</span>
+<span style="color: #888888">          &quot;C:\\Users\\brend\\OneDrive\\Documents\\cor-table.csv&quot;,</span>
+<span style="color: #888888">          row.names = FALSE)</span>
+
+<span style="color: #888888">ggscatter(WhiteWineRAW, x = &quot;quality&quot;, y = &quot;alcohol&quot;,</span>
+<span style="color: #888888">          add = &quot;reg.line&quot;,</span>
+<span style="color: #888888">          cor.coef = TRUE, cor.method = &quot;pearson&quot;, xlab = &quot;Quality Rating&quot;,</span>
+<span style="color: #888888">          ylab = &quot;Alcohol Percentage&quot;, title = &quot;Alcohol Percentage amount by Quality level&quot;, size = 1, color =&quot;blue&quot;)</span>
+
+<span style="color: #888888">ggscatter(WhiteWineRAW, x = &quot;quality&quot;, y = &quot;density&quot;,</span>
+<span style="color: #888888">          add = &quot;reg.line&quot;,</span>
+<span style="color: #888888">          cor.coef = TRUE, cor.method = &quot;pearson&quot;, xlab = &quot;Quality Rating&quot;,</span>
+<span style="color: #888888">          ylab = &quot;Density&quot;, title = &quot;Density level by Quality level&quot;, size = 1, color =&quot;blue&quot;)</span>
+
+<span style="color: #888888">ggscatter(WhiteWineRAW, x = &quot;density&quot;, y = &quot;residual.sugar&quot;,</span>
+<span style="color: #888888">          add = &quot;reg.line&quot;,</span>
+<span style="color: #888888">          cor.coef = TRUE, cor.method = &quot;pearson&quot;, xlab = &quot;Density&quot;,</span>
+<span style="color: #888888">          ylab = &quot;Residual Sugar Amount&quot;, title = &quot;Density by Residual Sugar Amount&quot;, size = 1, color =&quot;blue&quot;)</span>
+
+<span style="color: #888888"># Percent Stacked Barplot for alcohol strength in each category</span>
+
+
+<span style="color: #888888">ggplot(WhiteWine,  aes(fill=alcohol_strength, y=alcohol, x=rate)) + </span>
+<span style="color: #888888">  geom_bar(position=&quot;fill&quot;, stat=&quot;identity&quot;) + </span>
+<span style="color: #888888">  ggtitle(&quot;Alcohol Strength by Rating Percent Stacked Barplot&quot;) +</span>
+<span style="color: #888888">  xlab(&quot;Wine rating&quot;) +</span>
+<span style="color: #888888">  ylab (&quot;Alcohol Percentage&quot;) +</span>
+<span style="color: #888888">  labs(colour = &quot;Alcohol Strength&quot;)</span>
+
+
+<span style="color: #888888">#----------------- END WHITE WINE ------------------------------------</span>
+
+<span style="color: #888888">#----------------- BEGIN WHITE POINTS ----------------------------------</span>
+
+<span style="color: #888888">WineRate &lt;- read.csv(&quot;wine.csv&quot;,header=T)</span>
+<span style="color: #888888"> </span>
+<span style="color: #888888">#install.packages(&quot;sqldf&quot;)</span>
+<span style="color: #888888">library (sqldf)</span>
+
+<span style="color: #888888">### Just storing it for personal / family use ------------------------------</span>
+
+<span style="color: #888888">Personal_Wine_List &lt;- sqldf(&quot;SELECT Title, Points, Price, Province, Variety,</span>
+<span style="color: #888888">        Winery FROM WineRate WHERE Points &gt;= 95 AND Price &lt;= 60;&quot;)</span>
+
+<span style="color: #888888">write.csv(Personal_Wine_List,</span>
+<span style="color: #888888">        &quot;C:\\Users\\brend\\OneDrive\\Documents\\Dale_Personal_list.csv&quot;,</span>
+<span style="color: #888888">             row.names = FALSE)</span>
+
+<span style="color: #888888">#My family literally used the list to buy wine</span>
+<span style="color: #888888"># This Christmas, we&#39;ll be drinking 1965 and 1973 wine. I&#39;m sure it won&#39;t taste good. </span>
+
+<span style="color: #888888">##--------------------------------------------------------------------------</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Sparkling Blend&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1    89.43182            176</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Sangiovese&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1    88.42176            524</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Red Blend&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1     88.4664           1726</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Port&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1    90.37209             86</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Cabernet Sauvignon&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1    88.69431           1845</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Riesling&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1    89.56849           1022</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Red Blend&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1     88.4664           1726</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;White Blend&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1    87.33333            465</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Chardonnay&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1    88.34394           2294</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Champagne Blend&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1    91.15464             97</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Tempranillo Blend&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1    88.35088            114</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Shiraz&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1    89.17576            165</span>
+
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Pinot Noir&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1    89.41692           2648</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Zinfandel&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1    87.81044            517</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Merlot&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1    87.16358            593</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Syrah&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1    89.32449            829</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Sauvignon Blanc&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1    87.38732           1025</span>
+
+<span style="color: #888888">sqldf(&quot;SELECT AVG(Points), COUNT(Variety) FROM WineRate WHERE Variety=&#39;Pinot Grigio&#39;;&quot;)</span>
+<span style="color: #888888">#AVG(Points) COUNT(Variety)</span>
+<span style="color: #888888">#1    86.28723            188</span>
+
+<span style="color: #888888"># Manually inputted the data from SQL results</span>
+
+<span style="color: #888888">WineType &lt;- c(&quot;Sparkling Blend&quot;,&quot;Sangiovese&quot;,&quot;Port&quot;,&quot;Cabernet Sauvignon&quot;,</span>
+<span style="color: #888888">              &quot;Riesling&quot;,&quot;Red Blend&quot;,&quot;White Blend&quot;,&quot;Chardonnay&quot;,&quot;Champagne Blend&quot;,</span>
+<span style="color: #888888">              &quot;Tempranillo Blend&quot;,&quot;Shiraz&quot;,&quot;Pinot Noir&quot;,&quot;Zinfandel&quot;,</span>
+<span style="color: #888888">              &quot;Merlot&quot;,&quot;Syrah&quot;,&quot;Sauvignon Blanc&quot;,&quot;Pinot Grigio&quot;)</span>
+<span style="color: #888888">AvgRating &lt;- c(89.43182,88.42176,90.37209,88.69431,89.56849,88.4664,</span>
+<span style="color: #888888">               87.33333,88.34394,91.15464,88.35088,89.17576,89.41692,87.81044,</span>
+<span style="color: #888888">               87.16358,89.32449,87.38732,86.28723)</span>
+
+<span style="color: #888888">WineTypeRating &lt;- data.frame(WineType,AvgRating)</span>
+
+<span style="color: #888888">library(dplyr)</span>
+
+<span style="color: #888888">WineTypeRating &lt;- WineTypeRating %&gt;% arrange(AvgRating) # Arrange by average rating</span>
+<span style="color: #888888"># to make chart look clearly in order</span>
+
+<span style="color: #888888">par(mar=c(5,8,4,4)) # to ensure labels are visible</span>
+
+<span style="color: #888888">WineRateClean$Country &lt;- as.factor(WineRateClean$Country)</span>
+<span style="color: #888888">WineRateClean$Variety &lt;- as.factor(WineRateClean$Variety) # making a factor so it can be </span>
+<span style="color: #888888"># used to make charts </span>
+
+<span style="color: #888888">barplot(WineTypeRating$AvgRating, cex.names= 0.8, main = &quot;Average Wine Rating by Type of Wine&quot;,</span>
+<span style="color: #888888">        xlab = &quot;Point Rating&quot;, las=1,horiz = TRUE, cex.lab= 1.1, names.arg = WineTypeRating$WineType,</span>
+<span style="color: #888888">        col = &quot;darkred&quot;, xlim = c(83,95),xpd = F)</span>
+
+<span style="color: #888888">install.packages(&quot;ggpubr&quot;)</span>
+<span style="color: #888888">library(ggpubr)</span>
+
+<span style="color: #888888">ggscatter(WineRate, x = &quot;Points&quot;, y = &quot;Price&quot;,</span>
+<span style="color: #888888">          add = &quot;reg.line&quot;,</span>
+<span style="color: #888888">          cor.coef = TRUE, cor.method = &quot;pearson&quot;, xlab = &quot;Points Rating&quot;,</span>
+<span style="color: #888888">          ylab = &quot;Price&quot;, ylim = c(0,300), title = &quot;Prive vs Rating&quot;, </span>
+<span style="color: #888888">          size = 1, color =&quot;blue&quot;)</span>
+
+<span style="color: #888888">WineRateClean &lt;- na.omit(WineRate)</span>
+
+<span style="color: #888888">cor(WineRateClean$Price,WineRateClean$Points, method = c(&quot;pearson&quot;, &quot;kendall&quot;, &quot;spearman&quot;))</span>
+
+<span style="color: #888888">summary(WineRateClean)</span>
+
+<span style="color: #888888">#----------------- END WHITE POINTS -------------------------------</span>
+
+<span style="color: #888888">#-------------- BEGIN MERGING RED AND WHITE WINE DATA -----------------</span>
+
+<span style="color: #888888"># It seems like we would want to reduce the number of white wine observations to 1599</span>
+<span style="color: #888888"># to match the number of red wine observations. </span>
+<span style="color: #888888">#</span>
+<span style="color: #888888"># Hmm... let&#39;s do random sample of 500 observations each... thus totaling 1000 observations </span>
+
+<span style="color: #888888">random_sample_red &lt;- sample_n(wineRAW, 500, replace = FALSE)</span>
+
+<span style="color: #888888">random_sample_white &lt;- sample_n(WhiteWineRAW, 500, replace = FALSE)</span>
+
+<span style="color: #888888">WineMerge_Sample &lt;- merge(random_sample_red, random_sample_white, all = T)</span>
+
+<span style="color: #888888">cor(WineMerge_Sample)</span>
+
+<span style="color: #888888">ggscatter(WineMerge_Sample, x = &quot;quality&quot;, y = &quot;alcohol&quot;,</span>
+<span style="color: #888888">          add = &quot;reg.line&quot;,</span>
+<span style="color: #888888">          cor.coef = TRUE, cor.method = &quot;pearson&quot;, xlab = &quot;Quality Rating&quot;,</span>
+<span style="color: #888888">          ylab = &quot;Alcohol Percentage&quot;, title = &quot;Alcohol Percentage amount by Quality level&quot;, size = 1, color =&quot;green&quot;)</span>
+
+<span style="color: #888888">#-------------- END MERGING RED AND WHITE WINE DATA -----------------</span>
+</pre></div>
